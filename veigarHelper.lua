@@ -19,9 +19,9 @@
             killable = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
             killableRdy = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
             killableRdyW = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
-                eradius=350  -- event horizon's radius has bounds from 300 to 400
-                erange=600
-                ecastspeed=0.5 -- 0.5 second cast delay
+            eradius=350  -- event horizon's radius has bounds from 300 to 400
+            erange=600
+            ecastspeed=0.5 -- 0.5 second cast delay
             nukeIncluesWToggle = true --Spacebar includes W when game initiates if true.
             objectOfStun = nil
             invSlot = nil
@@ -29,16 +29,16 @@
          	KEY_UP = 0x101
            
         --BASIC OPTIONS
-                --HOTKEYS
-            HK = 32                                                     -- Spacebar to NUKE (PANIC KEY)
-            nukeIncluesWToggleKey = 118                 -- F7 to enable/disable: Include W in your Spacebar combo
+            --HOTKEYS
+            HK = 32                                             -- Spacebar to NUKE (PANIC KEY)
+            nukeIncluesWToggleKey = 118                 		-- F7 to enable/disable: Include W in your Spacebar combo
             qMinionKey = 119                                    -- F8 to enable/disable: Q minions with Q
-            EHK = 69                                                    -- E  to AUTO - STUN
-            cageAll = 71                                                -- G  to Encircle as many as possible with E
+            EHK = 69                                            -- E  to AUTO - STUN
+            cageAll = 71                                        -- G  to Encircle as many as possible with E
            
             --FUNCTIONS
-            steal = true                                                --Casts spells on killable targets (Not including W). Why would you set it to false
-            wOnStun = true                                              --If enemy within range is stunned W is casted at enemy
+            steal = true                                        --Casts spells on killable targets (Not including W). Why would you set it to false
+            wOnStun = true                                      --If enemy within range is stunned W is casted at enemy
             nukeOnStun = true                                   --autocast on all stunned targets
             drawKillable = true                                 --Draw Green/Blue Circle and Kill-Combo Text if killable
             eSmartcast = true                                   --Press E to SMARTCast on target nearest mouse location
