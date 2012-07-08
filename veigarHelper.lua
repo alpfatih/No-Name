@@ -1,6 +1,11 @@
 --[[
                     Veigar Helper v1.7d by ikita
                     Based on Veiger Helper v0.7 by NewHotness
+                    Inspired by llama's fpb veigar script and this script uses his stun calculations. Many thanks !
+                    
+
+                    Also thanks to Burn who helped me out when I am stuck.
+                    And BoL community for suggestions and reports
             ]]
              
         --STUFF AND OTHER THINGS      
