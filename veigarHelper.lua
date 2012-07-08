@@ -1,5 +1,5 @@
 --[[
-                    Veigar Helper v1.7d by ikita
+                    Veigar Helper v1.8 by ikita
                     Based on Veiger Helper v0.7 by NewHotness
                     Inspired by llama's fpb veigar script and this script uses his stun calculations. Many thanks !
                     
@@ -15,6 +15,7 @@
             ECastActive = false
             DFGId = 3128
             qMinionsActive = false
+            QHarassActive = false
             -- AM I DOING THIS RIGHT :D ?
             killable = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
             killableRdy = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
@@ -35,6 +36,7 @@
             qMinionKey = 119                                    -- F8 to enable/disable: Q minions with Q
             EHK = 69                                            -- E  to AUTO - STUN
             cageAll = 71                                        -- G  to Encircle as many as possible with E
+            harassHK = 90                                       -- Z  to Auto Q enemy in range
            
             --FUNCTIONS
             steal = true                                        --Casts spells on killable targets (Not including W). Why would you set it to false
@@ -43,6 +45,7 @@
             drawKillable = true                                 --Draw Green/Blue Circle and Kill-Combo Text if killable
             eSmartcast = true                                   --Press E to SMARTCast on target nearest mouse location
             drawSelfRange = false                               --Draw spell ranges for Veigar
+            
            
             --OTHER STUFF
             circleThickness = 20                                --Set Circle thickness for Killable Enemies.
@@ -275,6 +278,9 @@
                                                     CastSpell(_R, target)
                                             end
                                     end
+                                    if QHarassActive and CanUseSpell(_Q) == READY then
+                                    	CastSpell(_Q, target)
+                                    end
                             end
                            
                            
@@ -477,6 +483,19 @@
                 if msg == KEY_UP then
                         if key == cageAll then
                                 cageActive = false
+                        end
+                end
+                
+                --Toggle Q harass
+                if msg == KEY_DOWN then
+                                if key == harassHK then
+                        if QHarassActive then
+                                QHarassActive = false
+                                PrintChat(" >> Auto Q enemy in range disabled!")
+                        else
+                                QHarassActive = true
+                                PrintChat(" >> Auto Q enemy in range enabled!")
+                        end
                         end
                 end
                 
