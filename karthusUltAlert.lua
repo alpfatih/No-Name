@@ -1,5 +1,5 @@
 --[[
-	Karthus Ult Alert v1.0 by ikita
+	Karthus Ult Alert v1.0b by ikita
 	Alerts player to ult if someone can die from it
 	
 ]]
@@ -15,7 +15,7 @@ function drawHandler()
 			targetX = heroManager:GetHero(i)
 			ultDamage = player:CalcMagicDamage(targetX, math.floor(((player:GetSpellData(_R).level-1)*150) + 250 + 0.6*player.ap))
 			if targetX ~= nil and targetX.team == TEAM_ENEMY and targetX.dead == false and ultDamage - targetX.health > 0 then
-				DrawText("" .. targetX.charName, 20, 200, 170+23*i, 0xFFFFFF00)
+				DrawText("" .. targetX.charName, 60, 200, 120+63*i, 0xFFFFFF00)
 			end
 		end
 	end
