@@ -1,54 +1,60 @@
+do
+
 --[[
-                    Veigar Helper v1.8 by ikita
+                    Veigar Helper v1.8c by ikita
                     Based on Veiger Helper v0.7 by NewHotness
                     Inspired by llama's fpb veigar script and this script uses his stun calculations. Many thanks !
                     
 
                     Also thanks to Burn who helped me out when I am stuck.
                     And BoL community for suggestions and reports
+                    
+                    Script is very clumsy and poorly structured. Any help / suggestion to clean up is welcome !
             ]]
              
         --STUFF AND OTHER THINGS      
-            player = GetMyHero()
-            scriptActive = false
-            cageActive = false
-            ECastActive = false
-            DFGId = 3128
-            qMinionsActive = false
-            QHarassActive = false
+            local player = GetMyHero()
+            local scriptActive = false
+            local cageActive = false
+            local ECastActive = false
+            local DFGId = 3128
+            local qMinionsActive = false
+            local QHarassActive = false
             -- AM I DOING THIS RIGHT :D ?
-            killable = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
-            killableRdy = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
-            killableRdyW = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
-            eradius=350  -- event horizon's radius has bounds from 300 to 400
-            erange=600
-            ecastspeed=0.5 -- 0.5 second cast delay
-            nukeIncluesWToggle = true --Spacebar includes W when game initiates if true.
-            objectOfStun = nil
-            invSlot = nil
-         	KEY_DOWN = 0x100
-         	KEY_UP = 0x101
+            local killable = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
+            local killableRdy = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
+            local killableRdyW = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false}
+            local eradius=350  -- event horizon's radius has bounds from 300 to 400
+            local erange=600
+            local ecastspeed=0.5 -- 0.5 second cast delay
+            local nukeIncluesWToggle = true --Spacebar includes W when game initiates if true.
+            local objectOfStun = nil
+            local invSlot = nil
+         	local KEY_DOWN = 0x100
+         	local KEY_UP = 0x101
+         	local hero2
+         	local victim
            
         --BASIC OPTIONS
             --HOTKEYS
-            HK = 32                                             -- Spacebar to NUKE (PANIC KEY)
-            nukeIncluesWToggleKey = 118                 		-- F7 to enable/disable: Include W in your Spacebar combo
-            qMinionKey = 119                                    -- F8 to enable/disable: Q minions with Q
-            EHK = 69                                            -- E  to AUTO - STUN
-            cageAll = 71                                        -- G  to Encircle as many as possible with E
-            harassHK = 90                                       -- Z  to Auto Q enemy in range
+            local HK = 32                                             -- Spacebar to NUKE (PANIC KEY)
+            local nukeIncluesWToggleKey = 118                 		-- F7 to enable/disable: Include W in your Spacebar combo
+            local qMinionKey = 119                                    -- F8 to enable/disable: Q minions with Q
+            local EHK = 69                                            -- E  to AUTO - STUN
+            local cageAll = 71                                        -- G  to Encircle as many as possible with E
+            local harassHK = 90                                       -- Z  to Auto Q enemy in range
            
             --FUNCTIONS
-            steal = true                                        --Casts spells on killable targets (Not including W). Why would you set it to false
-            wOnStun = true                                      --If enemy within range is stunned W is casted at enemy
-            nukeOnStun = true                                   --autocast on all stunned targets
-            drawKillable = true                                 --Draw Green/Blue Circle and Kill-Combo Text if killable
-            eSmartcast = true                                   --Press E to SMARTCast on target nearest mouse location
-            drawSelfRange = false                               --Draw spell ranges for Veigar
+            local steal = true                                        --Casts spells on killable targets (Not including W). Why would you set it to false
+            local wOnStun = true                                      --If enemy within range is stunned W is casted at enemy
+            local nukeOnStun = false                                  --autocast on all stunned targets
+            local drawKillable = true                                 --Draw Green/Blue Circle and Kill-Combo Text if killable
+            local eSmartcast = true                                   --Press E to SMARTCast on target nearest mouse location
+            local drawSelfRange = false                               --Draw spell ranges for Veigar
             
            
             --OTHER STUFF
-            circleThickness = 20                                --Set Circle thickness for Killable Enemies.
+            local circleThickness = 20                                --Set Circle thickness for Killable Enemies.
            
         --FUNCTIONS
             function altDoFile(name)
@@ -69,18 +75,18 @@
              
                     for i = 1, heroManager.iCount do
                             local target = heroManager:GetHero(i)
-                            local qDmg = player:CalcMagicDamage(target, 45*(GetSpellData(_Q).level-1)+80+ (.6*player.ap))
-                            local wDmg = player:CalcMagicDamage(target, 50*(GetSpellData(_W).level-1)+120+ (1*player.ap))
-                            local rDmg = player:CalcMagicDamage(target, 125*(GetSpellData(_R).level-1)+250+ (1.2*player.ap) + (.8 * target.ap))
+                            local qDmg = player:CalcMagicDamage(target, 45*(player:GetSpellData(_Q).level-1)+80+ (.6*player.ap))
+                            local wDmg = player:CalcMagicDamage(target, 50*(player:GetSpellData(_W).level-1)+120+ (1*player.ap))
+                            local rDmg = player:CalcMagicDamage(target, 125*(player:GetSpellData(_R).level-1)+250+ (1.2*player.ap) + (.8 * target.ap))
                             local dfgDmg = 0
                            
-                            if GetSpellData(_Q).level == 0 then
+                            if player:GetSpellData(_Q).level == 0 then
                                     qDmg = 0
                             end
-                            if GetSpellData(_W).level == 0 then
+                            if player:GetSpellData(_W).level == 0 then
                                     wDmg = 0
                             end
-                            if GetSpellData(_R).level == 0 then
+                            if player:GetSpellData(_R).level == 0 then
                                     rDmg = 0
                             end
                            
@@ -100,7 +106,7 @@
                                                     PrintFloatText(target,0,"Q")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(_Q) == READY then
+                                                    if player:CanUseSpell(_Q) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -109,7 +115,7 @@
                                                     PrintFloatText(target,0,"DFG")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(invSlot) == READY then
+                                                    if player:CanUseSpell(invSlot) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -118,7 +124,7 @@
                                                     PrintFloatText(target,0,"R")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(_R) == READY then
+                                                    if player:CanUseSpell(_R) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -127,7 +133,7 @@
                                                     PrintFloatText(target,0,"Q+DFG")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(_Q) == READY and CanUseSpell(invSlot) == READY then
+                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -136,7 +142,7 @@
                                                     PrintFloatText(target,0,"Q+R")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(_Q) == READY and CanUseSpell(_R) == READY then
+                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(_R) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -145,7 +151,7 @@
                                                     PrintFloatText(target,0,"DFG+R")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(invSlot) == READY and CanUseSpell(_R) == READY then
+                                                    if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -154,7 +160,7 @@
                                                     PrintFloatText(target,0,"Q+DFG+R")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if CanUseSpell(_Q) == READY and CanUseSpell(invSlot) == READY and CanUseSpell(_R) == READY then
+                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -162,7 +168,7 @@
                                             elseif qDmg + wDmg > target.health then
                                                     PrintFloatText(target,0,"Q+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(_Q) == READY and CanUseSpell(_W) == READY then
+                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -172,7 +178,7 @@
                                             elseif dfgDmg > target.health then
                                                     PrintFloatText(target,0,"DFG+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(invSlot) == READY and CanUseSpell(_W) == READY then
+                                                    if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -182,7 +188,7 @@
                                             elseif rDmg + wDmg > target.health then
                                                     PrintFloatText(target,0,"R+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(_R) == READY and CanUseSpell(_W) == READY then
+                                                    if player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -192,7 +198,7 @@
                                             elseif qDmg + dfgDmg + wDmg > target.health then
                                                     PrintFloatText(target,0,"Q+DFG+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(_Q) == READY and CanUseSpell(invSlot) == READY and CanUseSpell(_W) == READY then
+                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -202,7 +208,7 @@
                                             elseif qDmg + rDmg + wDmg > target.health then
                                                     PrintFloatText(target,0,"Q+R+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(_Q) == READY and CanUseSpell(_R) == READY and CanUseSpell(_W) == READY then
+                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -212,7 +218,7 @@
                                             elseif dfgDmg + rDmg + wDmg > target.health then
                                                     PrintFloatText(target,0,"DFG+R+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(invSlot) == READY and CanUseSpell(_R) == READY and CanUseSpell(_W) == READY then
+                                                    if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -222,7 +228,7 @@
                                             elseif qDmg + dfgDmg + rDmg + wDmg > target.health then
                                                     PrintFloatText(target,0,"Q+DFG+R+W")
                                                     killable[i] = true
-                                                    if CanUseSpell(invSlot) == READY and CanUseSpell(_R) == READY and CanUseSpell(_W) == READY and CanUseSpell(_Q) == READY then
+                                                    if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY and player:CanUseSpell(_Q) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -257,28 +263,28 @@
                            
                             if target ~= nil and target.visible and target.team == TEAM_ENEMY and player:GetDistance(target) < 650 and not target.dead then
                                     if steal then
-                                            if qDmg > target.health and CanUseSpell(_Q) == READY then
+                                            if qDmg > target.health and player:CanUseSpell(_Q) == READY then
                                                     CastSpell(_Q, target)
-                                            elseif invSlot ~= nil and dfgDmg > target.health and CanUseSpell(invSlot) == READY then
+                                            elseif invSlot ~= nil and dfgDmg > target.health and player:CanUseSpell(invSlot) == READY then
                                                     CastSpell(invSlot, target)
-                                            elseif rDmg > target.health and CanUseSpell(_R) == READY then
+                                            elseif rDmg > target.health and player:CanUseSpell(_R) == READY then
                                                     CastSpell(_R, target)
-                                            elseif invSlot ~= nil and qDmg + dfgDmg > target.health and CanUseSpell(_Q) == READY and CanUseSpell(invSlot) == READY then
+                                            elseif invSlot ~= nil and qDmg + dfgDmg > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY then
                                                     CastSpell(invSlot, target)
                                                     CastSpell(_Q, target)
-                                            elseif qDmg + rDmg > target.health and CanUseSpell(_Q) == READY and CanUseSpell(_R) == READY then
+                                            elseif qDmg + rDmg > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(_R) == READY then
                                                     CastSpell(_Q, target)
                                                     CastSpell(_R, target)
-                                            elseif invSlot ~= nil and dfgDmg + rDmg > target.health and CanUseSpell(_R) == READY and CanUseSpell(invSlot) == READY then
+                                            elseif invSlot ~= nil and dfgDmg + rDmg > target.health and player:CanUseSpell(_R) == READY and player:CanUseSpell(invSlot) == READY then
                                                     CastSpell(invSlot, target)
                                                     CastSpell(_R, target)
-                                            elseif  invSlot ~= nil and qDmg + dfgDmg + rDmg > target.health and CanUseSpell(_Q) == READY and CanUseSpell(invSlot) == READY and CanUseSpell(_R) == READY then
+                                            elseif  invSlot ~= nil and qDmg + dfgDmg + rDmg > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
                                                     CastSpell(invSlot, target)
                                                     CastSpell(_Q, target)
                                                     CastSpell(_R, target)
                                             end
                                     end
-                                    if QHarassActive and CanUseSpell(_Q) == READY then
+                                    if QHarassActive and player:CanUseSpell(_Q) == READY then
                                     	CastSpell(_Q, target)
                                     end
                             end
@@ -312,7 +318,7 @@
                             for k = 1, objManager.maxObjects do
                                     local minionObject = objManager:GetObject(k)
                                     if minionObject ~= nil and minionObject.team == TEAM_ENEMY and string.find(minionObject.name,"Minion_") == 1 and minionObject.dead == false then
-                                            if  player:GetDistance(minionObject) < 650 and minionObject.health <= player:CalcMagicDamage(minionObject, 45*(GetSpellData(_Q).level-1)+80+ (.6*player.ap)) then
+                                            if  player:GetDistance(minionObject) < 650 and minionObject.health <= player:CalcMagicDamage(minionObject, 45*(player:GetSpellData(_Q).level-1)+80+ (.6*player.ap)) then
                                                     CastSpell(_Q, minionObject)
                                             end
                                     end
@@ -335,7 +341,7 @@
             end
            
             function CastESingleTarget(hero2)
-                        if(hero2 ~= nil ) and eSmartcast and CanUseSpell(_E) == READY then
+                        if(hero2 ~= nil ) and eSmartcast and player:CanUseSpell(_E) == READY then
                                 for i = 1, heroManager.iCount do
                         victim = heroManager:GetHero(i)
                         if victim.name == hero2.name then
@@ -564,3 +570,4 @@
             else
                        
             end
+end
