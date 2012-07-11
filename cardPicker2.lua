@@ -24,7 +24,7 @@
     KEY_UP = 0x101
      
     function msgHandler(msg, key)
-        if msg ~= KEY_UP or CanUseSpell(_W) ~= READY or GetTickCount() - lastUse <= 2500 or player.dead or cards[key] == nil or spellUsed ~= nil then return end    
+        if msg ~= KEY_UP or player:CanUseSpell(_W) ~= READY or GetTickCount() - lastUse <= 2500 or player.dead or cards[key] == nil or spellUsed ~= nil then return end    
         lastUse = GetTickCount()
         spellUsed = true
         selected = key
