@@ -44,13 +44,13 @@ end
 
 
 
-	if string.find(GetSpellData(SPELL_SUMMONER_1).name, "SummonerFlash") ~= nil then
-		flashSlot = SPELL_SUMMONER_1
+	if string.find(player:GetSpellData(SUMMONER_1).name, "SummonerFlash") ~= nil then
+		flashSlot = SUMMONER_1
 		PrintChat(" >> Smart Flash script loaded!")
 		BoL:addMsgHandler(Hotkey)
 		BoL:addTickHandler(tickHandler,50)
-	elseif string.find(GetSpellData(SPELL_SUMMONER_2).name, "SummonerFlash") ~= nil then
-		flashSlot = SPELL_SUMMONER_2
+	elseif string.find(player:GetSpellData(SUMMONER_2).name, "SummonerFlash") ~= nil then
+		flashSlot = SUMMONER_2
 		PrintChat(" >> Smart Flash script loaded!")
 		BoL:addMsgHandler(Hotkey)
 		BoL:addTickHandler(tickHandler,50)
