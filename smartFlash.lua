@@ -1,5 +1,5 @@
 --[[
-	Smart flash v1.0 by ikita
+	Smart flash v1.1 by ikita
     
 ]]
 
@@ -21,7 +21,7 @@ function tickHandler()
 		dz1 = range*math.sin(rad1)
 		x1 = x - dx1
 		z1 = z - dz1
-		if math.sqrt(dx*dx + dz*dz) < range + 50 then --Increase this number for smoother flash. (might fail if too large)
+		if math.sqrt(dx*dx + dz*dz) < range + 90 then --Increase this number for smoother flash. (might fail if too large)
 			CastSpell( flashSlot, x, z )
 		else
 			player:MoveTo(x1, z1)
@@ -44,13 +44,13 @@ end
 
 
 
-	if string.find(GetSpellData(Slots.SUMMONER_1).name, "SummonerFlash") ~= nil then
-		flashSlot = SUMMONER_1
+	if string.find(GetSpellData(SPELL_SUMMONER_1).name, "SummonerFlash") ~= nil then
+		flashSlot = SPELL_SUMMONER_1
 		PrintChat(" >> Smart Flash script loaded!")
 		BoL:addMsgHandler(Hotkey)
 		BoL:addTickHandler(tickHandler,50)
-	elseif string.find(GetSpellData(Slots.SUMMONER_2).name, "SummonerFlash") ~= nil then
-		flashSlot = SUMMONER_2
+	elseif string.find(GetSpellData(SPELL_SUMMONER_2).name, "SummonerFlash") ~= nil then
+		flashSlot = SPELL_SUMMONER_2
 		PrintChat(" >> Smart Flash script loaded!")
 		BoL:addMsgHandler(Hotkey)
 		BoL:addTickHandler(tickHandler,50)
