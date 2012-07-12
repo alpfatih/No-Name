@@ -12,7 +12,11 @@
              - Support for multiple animations per one DrawingSet. See example in autoSmiteee v1.0
     v0.2b:  Hotfix.
     v0.3:   isMultiply added + size support + font align support + few other changes.
-	v0.3b:  Modified for BOL
+    v0.3b:  Modified for BoL + added DrawCircle Color
+	
+    TODO : Add  back sprites support
+    TODO : Add Drawline
+    TODO : Add back font align support when BoL is handling it.
 	
     Example of usage:
     
