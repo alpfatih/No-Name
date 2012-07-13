@@ -7,6 +7,8 @@
     cmd list:
    .follow start DummyNick  -- starts follow champion with nickname: DummyNick
    .follow stop             -- stops follow champion
+   
+   Updated for BoL by ikita
 ]]
 
 
