@@ -1,6 +1,6 @@
 --[[
-	Animations Lib
-	v0.4
+	Animations Lib OLD !!
+	v0.3c
 	Modified by SurfaceS
     Originaly written by Weee for FPB
     Thanks 2 h0nda for help and lots of advices!
@@ -13,8 +13,7 @@
     v0.2b:  Hotfix.
     v0.3:   isMultiply added + size support + font align support + few other changes.
 	v0.3b:  Modified for BOL
-	v0.3c:  Put back the Sprites
-	v0.4:	Index ARGB value to 255
+	v0.3c:	Put back the Sprites
 	
     Example of usage:
     
@@ -23,12 +22,12 @@
     ds = DrawingSets()
 
     Adding drawingSets:
-    ds:Add("playerMark",DrawingCircle(100,player),DrawingCircle(150,player,255,255,0))
-    ds:Add("text1",DrawingText("TESTTEXTTESTTEXT",14,110,60,0,0,255,255),DrawingText("TESTTEXTTESTTEXT",14,100,40,0,255,0,255))
+    ds:Add("playerMark",DrawingCircle(100,player),DrawingCircle(150,player))
+    ds:Add("text1",DrawingText("TESTTEXTTESTTEXT",14,110,60,0,0,1,1),DrawingText("TESTTEXTTESTTEXT",14,100,40,0,1,0,1))
 
     Starting animations:
-    ds:Get("playerMark"):RunAnimation("namedAnim",PULSE,RADIUS,255,127,1,1)
-    ds:Get("text1"):RunAnimation("namedAnim",FADING,OPACITY,255,0,1,1) -- arguments: animation(PULSE,FADING,etc), value to change(OPACITY,RADIUS,RED,GREEN,BLUE, etc), from(0 to 255), to(0 to 255), speed (1 to 255), is repeatable (1,0)
+    ds:Get("playerMark"):RunAnimation(PULSE,RADIUS,1,0.5,1,1)
+    ds:Get("text1"):RunAnimation(FADING,OPACITY,1,0,1,1) -- arguments: animation(PULSE,FADING,etc), value to change(OPACITY,RADIUS,RED,GREEN,BLUE, etc), from(0 to 1), to(0 to 1), speed (0.1 to ...), is repeatable (1,0)
 
     Stopping animations:
     ds:Get("playerMark"):StopAnimations()
@@ -59,13 +58,13 @@ RADIUS = "radius"
 -- added for BOL
 -- ===========================
 function getHexFromARGB(argb)
-	if argb.A > 255 then argb.A = 255 elseif argb.A < 0 then argb.A = 0 end
-	if argb.R > 255 then argb.R = 255 elseif argb.R < 0 then argb.R = 0 end
-	if argb.G > 255 then argb.G = 255 elseif argb.G < 0 then argb.G = 0 end
-	if argb.B > 255 then argb.B = 255 elseif argb.B < 0 then argb.B = 0 end
+	if argb.A > 1 then argb.A = 1 elseif argb.A < 0 then argb.A = 0 end
+	if argb.R > 1 then argb.R = 1 elseif argb.R < 0 then argb.R = 0 end
+	if argb.G > 1 then argb.G = 1 elseif argb.G < 0 then argb.G = 0 end
+	if argb.B > 1 then argb.B = 1 elseif argb.B < 0 then argb.B = 0 end
 	-- NO BLUE UNTIL FIXED
 	argb.B = 0
-	return (math.floor(argb.B)+(math.floor(argb.G)*16^2)+(math.floor(argb.R)*16^4)+(math.floor(argb.A)*16^6))
+	return (math.floor(argb.B*255)+(math.floor(argb.G*255)*16^2)+(math.floor(argb.R*255)*16^4)+(math.floor(argb.A*255)*16^6))
 end
 
 -- ===========================
@@ -96,10 +95,10 @@ function DrawingCircle(radius,position,R,G,B,A)
 		dt.B = B
 		dt.A = A
 	else
-		dt.R = 255
-		dt.G = 255
-		dt.B = 255
-		dt.A = 255
+		dt.R = 1
+		dt.G = 1
+		dt.B = 1
+		dt.A = 1
 	end
     return dc
 end
@@ -124,7 +123,7 @@ function DrawingSpriteOverlay(path,x,y,alpha)
 	dsol.sprite = createSprite(path)
     dsol.path, dsol.orig_path = path, path
     dsol.position, dsol.orig_position = {x=x,y=y}, {x=x,y=y}
-    dsol.alpha, dsol_orig_alpha = alpha or 255, alpha or 255
+    dsol.alpha, dsol_orig_alpha = alpha or 1, alpha or 1
     return dsol
 end
 
@@ -346,7 +345,7 @@ DrawingEngine = {
 
 				elseif obj.sprite ~= nil then
                     if obj.position.x ~= nil then
-                        obj.sprite:Draw(obj.position.x, obj.position.y, obj.alpha)
+                        obj.sprite:Draw(obj.position.x, obj.position.y, obj.alpha * 255)
 						--sprite:DrawOverlay(obj.path,obj.position.x,obj.position.y,obj.scale)
                     end
                 else
