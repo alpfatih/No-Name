@@ -1,6 +1,6 @@
 --[[
 	Animations Lib
-	v0.3b
+	v0.3c
 	Modified by SurfaceS
     Originaly written by Weee for FPB
     Thanks 2 h0nda for help and lots of advices!
