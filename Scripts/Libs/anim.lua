@@ -65,7 +65,7 @@ function getHexFromARGB(argb)
 	if argb.R > 1 then argb.R = 1 end
 	if argb.G > 1 then argb.G = 1 end
 	if argb.B > 1 then argb.B = 1 end
-	return ((argb.A*255)+(argb.G*255*16^2)+(argb.R*255*16^4)+(argb.A*255*16^6)
+	return ((argb.A*255)+(argb.G*255*16^2)+(argb.R*255*16^4)+(argb.A*255*16^6))
 end
 
 -- ===========================
