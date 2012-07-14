@@ -61,11 +61,11 @@ RADIUS = "radius"
 -- added for BOL
 -- ===========================
 function getHexFromARGB(argb)
-	if argb.A > 1 then argb.A = 1 end
-	if argb.R > 1 then argb.R = 1 end
-	if argb.G > 1 then argb.G = 1 end
-	if argb.B > 1 then argb.B = 1 end
-	return ((argb.B*255)+(argb.G*255*16^2)+(argb.R*255*16^4)+(argb.A*255*16^6))
+	if argb.A > 1 then argb.A = 1 elseif argb.A < 0 then argb.A = 0 end
+	if argb.R > 1 then argb.R = 1 elseif argb.R < 0 then argb.R = 0 end
+	if argb.G > 1 then argb.G = 1 elseif argb.G < 0 then argb.G = 0 end
+	if argb.B > 1 then argb.B = 1 elseif argb.B < 0 then argb.B = 0 end
+	return (math.floor(argb.B*255)+(math.floor(argb.G*255)*16^2)+(math.floor(argb.R*255)*16^4)+(math.floor(argb.A*255)*16^6))
 end
 
 -- ===========================
