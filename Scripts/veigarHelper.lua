@@ -1,7 +1,7 @@
 do
 
 --[[
-                    Veigar Helper v1.8c by ikita
+                    Veigar Helper v1.8d by ikita
                     Based on Veiger Helper v0.7 by NewHotness
                     Inspired by llama's fpb veigar script and this script uses his stun calculations. Many thanks !
                     
@@ -101,7 +101,7 @@ do
                             end
                            
                             if drawKillable then
-                                    if target.team == TEAM_ENEMY and target.visible and not target.dead then
+                                    if target.team ~= player.team and target.visible and not target.dead then
                                             if qDmg > target.health then
                                                     PrintFloatText(target,0,"Q")
                                                     killable[i] = true
@@ -248,7 +248,7 @@ do
                             x = mousePos.x
                             z = mousePos.z
                            
-                            if target ~= nil and target.team == TEAM_ENEMY and scriptActive == true then
+                            if target ~= nil and target.team ~= player.team and scriptActive == true then
                                     if nukeIncluesWToggle then
                                         CastSpell(_W, x, z)
                                     end
@@ -261,7 +261,7 @@ do
                                     scriptActive = false
                             end
                            
-                            if target ~= nil and target.visible and target.team == TEAM_ENEMY and player:GetDistance(target) < 650 and not target.dead then
+                            if target ~= nil and target.visible and target.team ~= player.team and player:GetDistance(target) < 650 and not target.dead then
                                     if steal then
                                             if qDmg > target.health and player:CanUseSpell(_Q) == READY then
                                                     CastSpell(_Q, target)
@@ -290,7 +290,7 @@ do
                             end
                            
                            
-                            if target ~= nil and target.team == TEAM_ENEMY and target.dead == false then
+                            if target ~= nil and target.team ~= player.team and target.dead == false then
                                     if nukeOnStun or wOnStun then
      
      
@@ -317,7 +317,7 @@ do
                     if qMinionsActive then
                             for k = 1, objManager.maxObjects do
                                     local minionObject = objManager:GetObject(k)
-                                    if minionObject ~= nil and minionObject.team == TEAM_ENEMY and string.find(minionObject.name,"Minion_") == 1 and minionObject.dead == false then
+                                    if minionObject ~= nil and minionObject.team ~= player.team and string.find(minionObject.name,"Minion_") == 1 and minionObject.dead == false then
                                             if  player:GetDistance(minionObject) < 650 and minionObject.health <= player:CalcMagicDamage(minionObject, 45*(player:GetSpellData(_Q).level-1)+80+ (.6*player.ap)) then
                                                     CastSpell(_Q, minionObject)
                                             end
@@ -407,7 +407,7 @@ do
                     local closest
                     for i = 1, heroManager.iCount do
                             local target = heroManager:GetHero(i)
-                            if target ~= nil and target.team == TEAM_ENEMY then
+                            if target ~= nil and target.team ~= player.team then
                                     if (distanceFromMouse(target) < distanceFromMouse(closest) or closest == nil) then
                                             closest = target
                                     end
@@ -538,7 +538,7 @@ do
             function createObjHandler(object121)
                 for i = 1, heroManager.iCount do
                 local target2 = heroManager:GetHero(i)
-                                    if target2 ~= nil and object121 ~= nil and object121.name == "Data\\Particles\\Stun_glb.troy"  and target2:GetDistance(object121) <= 100  and target2.team == TEAM_ENEMY and target2.dead == false  then
+                                    if target2 ~= nil and object121 ~= nil and object121.name == "Data\\Particles\\Stun_glb.troy"  and target2:GetDistance(object121) <= 100  and target2.team ~= player.team and target2.dead == false  then
                                                         if nukeOnStun or wOnStun then
      
      
