@@ -22,6 +22,10 @@ local trinReady = false
 local lastTrinOn = 0
 local lastTrinOff = 0
 
+--HITEN
+local lastHitenOn = false
+local hitenDmg = 0
+
 function SpellI(object, spellName)
 	--SHEEN
 	if sheenSlot ~= nil and sheenReady == true and object ~= nil and object.name == player.name and ((spellName == "IreliaTranscendentBlades") or (spellName == "IreliaGatotsu") or (spellName == "IreliaHitenStyle") or (spellName == "IreliaEquilibriumStrike")) then
@@ -41,6 +45,11 @@ function SpellI(object, spellName)
     if sheenSlot ~= nil and trinActive == true and object ~= nil and object.name == player.name and ((spellName == "IreliaBasicAttack") or (spellName == "IreliaGatotsu") or (spellName == "IreliaBasicAttack2") or (spellName == "IreliaCritAttack")) then --On hit triggers
 		lastTrinOff = GetTickCount()
 		trinActive = false
+    end
+    
+    --Hiten Style
+    if spellName == "IreliaHitenStyle" then
+    	lastHitenOn = GetTickCount()
     end
 end
 
@@ -81,6 +90,13 @@ function tickHandlerI()
 		end
 	end	
 	
+	--augment Hiten Q damage
+	if GetTickCount() - lastHitenOn < 6000 then
+		hitenDmg = (player:GetSpellData(_W).level)*15
+	else
+		hitenDmg = 0
+	end
+	
 	--KS with Q function
 	if player:GetSpellData(_Q).level > 0 and player:CanUseSpell(_Q) == READY then
 		for i=1, heroManager.iCount do
@@ -88,18 +104,19 @@ function tickHandlerI()
 			local qDamage = player:CalcDamage(target, myQ)
 			
 			if target ~= nil and target.visible == true and target.team ~= player.team and target.dead == false and player:GetDistance(target) < 650 then
-				if target.health < qDamage then
+				if target.health < qDamage + hitenDmg then
 					CastSpell(_Q, target)
 				end
 			end
 		end
 	end
+	
 	--Q minion founction
     if qMinionsActiveI then
     	for k = 1, objManager.maxObjects do
         	local minionObjectI = objManager:GetObject(k)
         	if minionObjectI ~= nil and string.find(minionObjectI.name,"Minion_") == 1 and minionObjectI.team ~= player.team and minionObjectI.dead == false then
-        		if  player:GetDistance(minionObjectI) < 650 and math.sqrt((mousePos.x - minionObjectI.x)*(mousePos.x - minionObjectI.x) + (mousePos.z - minionObjectI.z)*(mousePos.z - minionObjectI.z)) < 300 and minionObjectI.health <= player:CalcDamage(minionObjectI, myQ) then	
+        		if  player:GetDistance(minionObjectI) < 650 and math.sqrt((mousePos.x - minionObjectI.x)*(mousePos.x - minionObjectI.x) + (mousePos.z - minionObjectI.z)*(mousePos.z - minionObjectI.z)) < 300 and minionObjectI.health <= player:CalcDamage(minionObjectI, myQ) + hitenDmg then	
             		CastSpell(_Q, minionObjectI)
             	end
         	end
