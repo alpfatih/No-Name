@@ -54,6 +54,7 @@
     function TimerTick()
     		if move = true and GetTickCount() - lastTimedtime > delay then
     			player:MoveTo(lastRightClick.x, lastRightClick.z)
+    			move = false
     		end
             if lastRightClick.x ~= nil and lastRightClick.z ~= nil then
                     if math.abs(player.x-lastRightClick.x) <= 75 and math.abs(player.z-lastRightClick.z) <= 75 then
