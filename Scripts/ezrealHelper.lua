@@ -2,7 +2,7 @@ local player = GetMyHero()
 if player.charName == "Ezreal" then
 
 --[[
-	Ezreal Helper v1.0 by ikita
+	Ezreal Helper v1.1 by ikita
 	Auto Q after each auto-atk
 ]]
 
@@ -14,6 +14,7 @@ local qWidth = 150 -- can change
 local blocked = false
 local justAA = false
 local AAtimer = 0
+local waitTime = 100 --if you have good ping, set it to a value higher than 100 ms. if you have bad ping then change this to zero.
 --[[		Code		]]
 function altDoFile(name)
     dofile(debug.getinfo(1).source:sub(debug.getinfo(1).source:find(".*\\")):sub(2)..name)
@@ -84,7 +85,7 @@ function tickHandlerE()
 		if blocked == false and alwaysQ then
         	CastSpell(_Q, predic.x, predic.z)
         end
-        if blocked == false and qAfterAA and justAA then
+        if blocked == false and qAfterAA and justAA and GetTickCount() - AAtimer > waitTime then
         	CastSpell(_Q, predic.x, predic.z)
         	justAA = false
         end
