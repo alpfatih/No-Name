@@ -3,7 +3,7 @@
             This script will face you in the direction of Tryndamere's Mocking Shout and opp. direction of Cassiopeia's Petrifying Gaze.
             Then it will continue walking to the previous location directed by you, if you had done so.
             
-            Updated for BoL by ikita
+            Updated for BoL by ikita v1.2
     ]]
     function altDoFile(name)
     dofile(debug.getinfo(1).source:sub(debug.getinfo(1).source:find(".*\\")):sub(2)..name)end
@@ -11,7 +11,9 @@
      
     --[[     GLOBALS     ]]--
     delay = 850
+    lastTimedtime = 0
     player = GetMyHero()
+    Move = false
     lastRightClick = {x = nil, y = nil, z = nil}
     lastPlayerPos = {x = nil, y = nil}
      
@@ -23,7 +25,8 @@
                             C = B+(B-A):Normalize()*(100)
                             player:MoveTo((C.x),(C.z))
                             if lastRightClick.x ~= nil and lastRightClick.z ~= nil then
-                                    Move()
+                                    move = true
+                                    lastTimedtime = GetTickCount()
                             end
                     elseif spellName == "MockingShout" and player:GetDistance(objectSpell) <= 850 then
                             A = Vector:New(objectSpell.x,objectSpell.z)
@@ -31,21 +34,14 @@
                             C = B+(B-A):Normalize()*(-100)
                             player:MoveTo((C.x),(C.z))
                             if lastRightClick.x ~= nil and lastRightClick.z ~= nil then
-                                    Move()
+                                    move = true
+                                    lastTimedtime = GetTickCount()
                             end
                     end
             end
     end
      
-    function Move()
-    		lastTimedtime = GetTickCount()
-    		iambored = 0
-    		while (GetTickCount() - lastTimedtime < delay) do
-            	iambored = iambored + 1 --is this lagging ? D:
-            end
-            player:MoveTo(lastRightClick.x, lastRightClick.z)
-            
-    end
+
      
     function MouseClick(msgM, key)
             if msgM == WM_RBUTTONDOWN then
@@ -56,6 +52,9 @@
     end
      
     function TimerTick()
+    		if move = true and GetTickCount() - lastTimedtime > delay then
+    			player:MoveTo(lastRightClick.x, lastRightClick.z)
+    		end
             if lastRightClick.x ~= nil and lastRightClick.z ~= nil then
                     if math.abs(player.x-lastRightClick.x) <= 75 and math.abs(player.z-lastRightClick.z) <= 75 then
                     --If player has reached last right clicked position.
