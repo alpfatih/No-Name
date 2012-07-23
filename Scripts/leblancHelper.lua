@@ -1,7 +1,7 @@
 if player.charName == "Leblanc" then
 
 --[[
-                    Leblanc Helper v1.0 by ikita
+                    Leblanc Helper v1.0b by ikita
                     Based on Veiger Helper v0.7 by NewHotness
                     
 
@@ -273,10 +273,6 @@ if player.charName == "Leblanc" then
                                    		end
                                    	else
                                    		CastSpell(_Q, hero)
-                                    	CastSpell(_R, hero)
-                                    	if lastSpellUlt == "LeblancChaosOrbM" then
-                                    		CastSpell(_W, x, z)
-                                    	end
                                     end
                                     scriptActive = false
                             end
