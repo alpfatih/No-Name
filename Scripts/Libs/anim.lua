@@ -80,7 +80,6 @@ function getHexFromARGB(argb)
 			HPartString = tostring(HpartNumber)
 		end
 		while string.len(LPartString) < 5 do
-			local LHNumber = tonumber(string.sub(LPartString, 1, 1))
 			LPartString = "0"..LPartString
 		end
 		return tonumber(HPartString..LPartString)
