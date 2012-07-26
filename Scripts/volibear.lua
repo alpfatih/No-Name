@@ -1,5 +1,6 @@
+if GetMyHero().charName == "Volibear" then
 --[[
-	Volibear Bite Helper v0.1 by ikita for BoL
+	Volibear Bite Helper v0.1b by ikita for BoL
 	Automatically cast bite when someone in range can die from it
 ]]
 
@@ -36,3 +37,4 @@ end
 	else
 
 	end
+end
