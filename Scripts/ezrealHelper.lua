@@ -2,7 +2,7 @@ local player = GetMyHero()
 if player.charName == "Ezreal" then
 
 --[[
-	Ezreal Helper v1.1 by ikita
+	Ezreal Helper v1.1b by ikita
 	Auto Q after each auto-atk
 ]]
 
@@ -76,7 +76,7 @@ function tickHandlerE()
         			
         			--Distance from point to line
         			distanc = (math.abs(mz - m*mx - c))/(math.sqrt(m*m+1))
-        			if distanc < qWidth then
+        			if distanc < qWidth and math.sqrt((tx - ex)*(tx - ex) + (tz - ez)*(tz - ez)) > math.sqrt((tx - mx)*(tx - mx) + (tz - mz)*(tz - mz)) then
         				blocked = true
         			end
             	end
