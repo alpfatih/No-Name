@@ -2,12 +2,13 @@ local player = GetMyHero()
 if player.charName == "Ezreal" then
 
 --[[
-	Ezreal Helper v1.1b by ikita
+	Ezreal Helper v1.1c by ikita
 	Auto Q after each auto-atk
 ]]
 
 --SETTINGS
 local qAfterAA = true
+local qAfterAAKey = 71 -- G
 local alwaysQ = false
 local alwaysQKey = 84 -- T
 local qWidth = 150 -- can change
@@ -101,6 +102,17 @@ function HotkeyE(msg,key)
             else
                 alwaysQ = true
                 PrintChat(" >> Always Q enabled!")
+            end     
+        end
+    end   
+	if msg == KEY_DOWN then 
+    	if key == qAfterAAKey then
+        	if qAfterAA then
+            	qAfterAA = false
+                PrintChat(" >> Q After AA disabled!")  
+            else
+                qAfterAA = true
+                PrintChat(" >> Q After AA enabled!")
             end     
         end
     end   
