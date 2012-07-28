@@ -2,7 +2,7 @@ local player = GetMyHero()
 if player.charName == "Ezreal" then
 
 --[[
-	Ezreal Helper v1.1c by ikita
+	Ezreal Helper v1.1d by ikita
 	Auto Q after each auto-atk
 ]]
 
@@ -56,7 +56,7 @@ function tickHandlerE()
 --        			PrintChat("blocked")
 --        		end
         		--Calculate minion block
-        		if  player:GetDistance(minionObjectE) < 900 then
+        		if  player:GetDistance(minionObjectE) < math.sqrt((tx - ex)*(tx - ex) + (tz - ez)*(tz - ez)) then
         			--Player coordinates
         			ex = player.x
         			ez = player.z
