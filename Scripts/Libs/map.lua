@@ -18,23 +18,23 @@
 map = {}
 map.name, map.shortName = "unknown" , "unknown"
 for i = 1, objManager.maxObjects do
-	local objSP = objManager:getObject(i)
-	if objSP ~= nil then
-		if objSP.type == "obj_Shop" and objSP.team == TEAM_BLUE then
-			PrintChat(objSP.type.." - "..objSP.x.." - "..objSP.y.." - "..objSP.z)
-			if math.floor(objSP.x) == -175 and math.floor(objSP.y) == 163 and math.floor(objSP.z) == 1056 then
+	local object = objManager:getObject(i)
+	if object ~= nil then
+		if object.type == "obj_Shop" and object.team == TEAM_BLUE then
+			PrintChat(object.type.." - "..object.x.." - "..object.y.." - "..object.z)
+			if math.floor(object.x) == -175 and math.floor(object.y) == 163 and math.floor(object.z) == 1056 then
 				map.name = "Summoner's Rift"
 				map.shortName = "summonerRift"
 				break
-			elseif math.floor(objSP.x) == -217 and math.floor(objSP.y) == 276 and math.floor(objSP.z) == 7039 then
+			elseif math.floor(object.x) == -217 and math.floor(object.y) == 276 and math.floor(object.z) == 7039 then
 				map.name = "The Twisted Treeline"
 				map.shortName = "twistedTreeline"
 				break
-			elseif math.floor(objSP.x) == 556 and math.floor(objSP.y) == 191 and math.floor(objSP.z) == 1887 then
+			elseif math.floor(object.x) == 556 and math.floor(object.y) == 191 and math.floor(object.z) == 1887 then
 				map.name = "The Proving Grounds"
 				map.shortName = "provingGrounds"
 				break
-			elseif math.floor(objSP.x) == 16 and math.floor(objSP.y) == 168 and math.floor(objSP.z) == 4452 then
+			elseif math.floor(object.x) == 16 and math.floor(object.y) == 168 and math.floor(object.z) == 4452 then
 				map.name = "The Crystal Scar"
 				map.shortName = "crystalScar"
 				break
