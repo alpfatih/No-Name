@@ -1,5 +1,5 @@
 --[[
-        Script: Jungle Display v0.1b
+        Script: Jungle Display v0.1c
 		Author: SurfaceS
 		
 		required libs : 		map
@@ -9,6 +9,7 @@
 		UPDATES :
 		v0.1					initial release
 		v0.1b					added twisted treeline + ping and chat functions.
+		v0.1c					added ingame time.
 		
 		USAGE :
 		The script allow you to move and rotate the display
@@ -33,6 +34,7 @@ if LIB_PATH == nil then LIB_PATH = SCRIPT_PATH.."Libs/" end
 if SPRITE_PATH == nil then SPRITE_PATH = SCRIPT_PATH:gsub("\\", "/"):gsub("/Scripts", "").."Sprites/" end
 if myHero == nil then myHero = GetMyHero() end
 if map == nil then dofile(LIB_PATH.."map.lua") else return end
+if START_TICK == nil then START_TICK = tonumber(GetTickCount()) end
 
 jungle = {}
 
@@ -463,6 +465,7 @@ function jungle.tickHandler()
 					camp.deathTick = tick
 					camp.advisedBefore = false
 					camp.advised = false
+					camp.respawnTime = math.ceil((tick - START_TICK) / 1000) + monster.respawn
 				elseif (camp.status == 4) then
 					campStatus = 4
 				else
@@ -499,6 +502,9 @@ function jungle.tickHandler()
 					-- temp fix until camp.showOnMinimap work
 					if secondLeft == 0 then
 						camp.status = 0
+					end
+					if jungle.shiftKeyPressed then
+						secondLeft = camp.respawnTime
 					end
 					camp.drawText = " "..jungle.timerText(secondLeft)
 					camp.drawColor = 0xFFFFFF00
