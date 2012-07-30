@@ -21,7 +21,6 @@ for i = 1, objManager.maxObjects do
 	local object = objManager:getObject(i)
 	if object ~= nil then
 		if object.type == "obj_Shop" and object.team == TEAM_BLUE then
-			PrintChat(object.type.." - "..object.x.." - "..object.y.." - "..object.z)
 			if math.floor(object.x) == -175 and math.floor(object.y) == 163 and math.floor(object.z) == 1056 then
 				map.name = "Summoner's Rift"
 				map.shortName = "summonerRift"
