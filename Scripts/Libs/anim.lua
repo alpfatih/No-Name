@@ -67,13 +67,15 @@ function getHexFromARGB(argb)
 	if argb.B > 255 then argb.B = 255 elseif argb.B < 0 then argb.B = 0 else argb.B = math.floor(argb.B) end
 	-- walk around the BoL bug on bitwise
 	if argb.A > 0 and argb.B > 0 then
-		if argb.B > 100 then
+		if argb.A < 100 then
+			argb.A = 0
+		elseif argb.B < 100 then
+			argb.B = 0
+		else
 			if argb.R > 100 and argb.G > 100 then return 4294967295		-- white
 			elseif argb.R > 100 then return 4294902015					-- purple
 			elseif argb.G > 100 then return 4278255615					-- cyan
 			else return 4278190335 end									-- blue
-		else
-			argb.B = 0
 		end
 	end
 	return (math.floor(argb.B)+(math.floor(argb.G)*16^2)+(math.floor(argb.R)*16^4)+(math.floor(argb.A)*16^6))
@@ -252,7 +254,7 @@ DrawingSets = {
     Add = function(self, drawingID, drawingObject, ...)
         if self[drawingID] == nil then self[drawingID] = {drawingID = drawingID, animation = nil, objects = {}} end
         table.insert(self[drawingID].objects, drawingObject)
-        if #arg < 1 then return end
+        if arg == nil or #arg < 1 then return end
         for i,v in ipairs(arg) do
             table.insert(self[drawingID].objects, v)
         end
