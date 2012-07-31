@@ -1,6 +1,6 @@
 --[[
 	Animations Lib
-	v0.4b
+	v0.4e
 	Modified by SurfaceS
     Originaly written by Weee for FPB
     Thanks 2 h0nda for help and lots of advices!
@@ -16,6 +16,7 @@
 	v0.3c:  Put back the Sprites
 	v0.4:	Index ARGB value to 255
 	v0.4b:	walk around the BoL bug on bitwise
+	v0.4e:	revert back to another walk around
 	
     Example of usage:
     
@@ -66,23 +67,14 @@ function getHexFromARGB(argb)
 	if argb.B > 255 then argb.B = 255 elseif argb.B < 0 then argb.B = 0 else argb.B = math.floor(argb.B) end
 	-- walk around the BoL bug on bitwise
 	if argb.A > 0 and argb.B > 0 then
-		local argNumber = (argb.A*(16^6))+(argb.R*(16^4))+(argb.G*(16^2))
-		local HPartString = (string.len(argNumber) > 5 and string.sub(tostring(argNumber), 1, -6) or "")
-		local LPartString = string.sub(tostring(argNumber), -5)
-		local LPartNumber = tonumber(LPartString) + argb.B
-		LPartString = tostring(LPartNumber)
-		colorTest.Text1 = HPartString
-		colorTest.Text2 = LPartString
-		while string.len(LPartString) > 5 do
-			local LHNumber = tonumber(string.sub(LPartString, 1, 1))
-			LPartString = string.sub(LPartString, 2)
-			local HpartNumber = tonumber(HPartString) + LHNumber
-			HPartString = tostring(HpartNumber)
+		if argb.B > 100 then
+			if argb.R > 100 and argb.G > 100 then return 4294967295		-- white
+			elseif argb.R > 100 then return 4294902015					-- purple
+			elseif argb.G > 100 then return 4278255615					-- cyan
+			else return 4278190335 end									-- blue
+		else
+			argb.B = 0
 		end
-		while string.len(LPartString) < 5 do
-			LPartString = "0"..LPartString
-		end
-		return tonumber(HPartString..LPartString)
 	end
 	return (math.floor(argb.B)+(math.floor(argb.G)*16^2)+(math.floor(argb.R)*16^4)+(math.floor(argb.A)*16^6))
 end
@@ -113,12 +105,16 @@ function DrawingCircle(radius,position,R,G,B,A)
 		dt.R = R
 		dt.G = G
 		dt.B = B
-		dt.A = A
+		-- walk around the BoL bug on bitwise
+		--dt.A = A
+		dt.A = 0
 	else
 		dt.R = 255
 		dt.G = 255
 		dt.B = 255
-		dt.A = 255
+		-- walk around the BoL bug on bitwise
+		--dt.A = 255
+		dt.A = 0
 	end
     return dc
 end
