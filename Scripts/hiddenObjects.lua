@@ -25,7 +25,7 @@ hiddenObjects.objectsToAdd = {
 	{ name = "VisionWard", objectType = "wards", spellName = "VisionWard", color = 0x00FF00FF, range = 1450, duration = 180000, icon = "yellowPoint"},
 	{ name = "SightWard", objectType = "wards", spellName = "SightWard", color = 0x0000FF00, range = 1450, duration = 180000, icon = "greenPoint"},
 	{ name = "WriggleLantern", objectType = "wards", spellName = "WriggleLantern", color = 0x0000FF00, range = 1450, duration = 180000, icon = "greenPoint"},
-	{ name = "ShacoBox", objectType = "boxes", spellName = "ShacoBox", color = 0x00FF0000, range = 300, duration = 60000, icon = "redPoint"},
+	{ name = "ShacoBox", objectType = "boxes", spellName = "JackInTheBox", color = 0x00FF0000, range = 300, duration = 60000, icon = "redPoint"},
 	{ name = "MaokaiSproutling", objectType = "boxes", spellName = "MaokaiSapling2", color = 0x00FF0000, range = 300, duration = 35000, icon = "redPoint"},
 	{ name = "TeemoMushroom", objectType = "traps", spellName = "TeemoMushroom", color = 0x00FF0000, range = 300, duration = 600000, icon = "cyanPoint"},
 	{ name = "CaitlynTrap", objectType = "traps", spellName = "CaitlynYordleTrap", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
