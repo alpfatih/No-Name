@@ -44,7 +44,6 @@ function miniMap.wizard.writeConfig()
 	PrintChat(" >> MiniMap Marks Wizard Setup: Config saved. Bye-bye! Thanks for using!")
 	if miniMap.load() == 1 then
 		-- clean wizard
-		BoL:removeHandler(miniMap.wizard.pingCorner)
 		BoL:removeHandler(miniMap.wizard.tickHandler)
 		BoL:removeHandler(miniMap.wizard.drawHandler)
 		BoL:removeHandler(miniMap.wizard.msgHandler)
