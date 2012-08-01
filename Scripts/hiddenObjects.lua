@@ -7,7 +7,7 @@
 		exposed variables : 	hiddenObjects, file_exists
 		
 		UPDATES :
-		v0.1					initial release
+		v0.1				initial release
 		
 		
 		USAGE :

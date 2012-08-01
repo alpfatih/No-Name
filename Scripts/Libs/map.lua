@@ -1,12 +1,13 @@
 --[[
-        Libray: Map Name v0.1
+        Libray: Map Name v0.1b
 		Author: SurfaceS
 		
 		required libs : 		none
 		exposed variables : 	map
 		
 		UPDATES :
-		v0.1					initial release
+		v0.1				initial release
+		v0.1b				added size infos
 		
 		USAGE :
 		Load the libray from your script
