@@ -36,7 +36,7 @@ if SCRIPT_PATH == nil then SCRIPT_PATH = debug.getinfo(1).source:sub(debug.getin
 if LIB_PATH == nil then LIB_PATH = SCRIPT_PATH.."Libs/" end
 if SPRITE_PATH == nil then SPRITE_PATH = SCRIPT_PATH:gsub("\\", "/"):gsub("/Scripts", "").."Sprites/" end
 if myHero == nil then myHero = GetMyHero() end
-if map == nil then dofile(LIB_PATH.."map.lua") else return end
+if map == nil then dofile(LIB_PATH.."map.lua") end
 if START_TICK == nil then START_TICK = tonumber(GetTickCount()) end
 
 jungle = {}
@@ -48,6 +48,7 @@ jungle.textOnRespawn = true				-- print chat text on respawn
 jungle.textOnRespawnBefore = true		-- print chat text before respawn
 jungle.adviceBefore = 20				-- time in second to advice before monster respawn
 jungle.adviceEnemyMonsters = true		-- advice enemy monster, or just our monsters
+jungle.useSprites = true				-- nice shown or not
 
 --[[      GLOBAL      ]]
 jungle.configFile = LIB_PATH.."jungle.cfg"
@@ -355,12 +356,21 @@ function jungle.drawHandler()
 	local monsterCount = 0
 	for i,monster in pairs(jungle.monsters[map.shortName]) do
 		if monster.isSeen == true then
-			jungle.monsters[map.shortName][i].sprite:Draw(jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFF)
-			if monster.advise then jungle.icon.advise.sprite:Draw(jungle.display.x + monster.shift.x + jungle.display.size - 18,jungle.display.y - 2,0xFF) end
+			if jungle.useSprites then 
+				jungle.monsters[map.shortName][i].sprite:Draw(jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFF)
+				if monster.advise then jungle.icon.advise.sprite:Draw(jungle.display.x + monster.shift.x + jungle.display.size - 18,jungle.display.y - 2,0xFF) end
+			else
+				DrawText(monster.name..(monster.advise and " *" or ""),17,jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFFFF0000)
+			end
+			
 			for j,camp in pairs(monster.camps) do
 				if camp.status ~= 0 then
-					jungle.teams["team"..camp.team].sprite:Draw(jungle.display.x + camp.shift.x,jungle.display.y + camp.shift.y,0xFF)
-					DrawText(camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
+					if jungle.useSprites then
+						jungle.teams["team"..camp.team].sprite:Draw(jungle.display.x + camp.shift.x,jungle.display.y + camp.shift.y,0xFF)
+						DrawText(camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
+					else
+						DrawText(camp.team.." - "..camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
+					end
 				end
 			end
 			monsterCount = monsterCount + 1
@@ -580,17 +590,19 @@ function jungle.tickHandler()
 end
 
 if jungle.monsters[map.shortName] ~= nil then
-	-- load icons drawing sprites
-	for i,icon in pairs(jungle.icon) do
-		icon.sprite = jungle.returnSprite(icon.spriteFile..".dds")
-	end
-	-- load side drawing sprites
-	for i,camps in pairs(jungle.teams) do
-		camps.sprite = jungle.returnSprite(camps.spriteFile..".dds")
+	if jungle.useSprites then
+		-- load icons drawing sprites
+		for i,icon in pairs(jungle.icon) do
+			icon.sprite = jungle.returnSprite(icon.spriteFile..".dds")
+		end
+		-- load side drawing sprites
+		for i,camps in pairs(jungle.teams) do
+			camps.sprite = jungle.returnSprite(camps.spriteFile..".dds")
+		end
 	end
 	-- load monster sprites and init values
 	for i,monster in pairs(jungle.monsters[map.shortName]) do
-		monster.sprite = jungle.returnSprite(monster.spriteFile..".dds")
+		if jungle.useSprites then monster.sprite = jungle.returnSprite(monster.spriteFile..".dds") end
 		monster.isSeen = false
 		for j,camp in pairs(monster.camps) do
 			camp.enemyTeam = (camp.team ~= TEAM_NEUTRAL and camp.team ~= myHero.team)
