@@ -13,8 +13,12 @@
 		USAGE :
 		Load the libray from your script
 		
+		map.index = 1-4 (0 mean not found)
 		map.name -> return you the full map name
 		map.shortName -> return you the shorted map name (usefull for using it in table)
+		map.min {x, y} -> return min map x, y
+		map.max{x, y} -> return max map x, y
+		map{x, y} -> return map size x, y
 ]]
 
 if map ~= nil and map.index ~= 0 then return end
