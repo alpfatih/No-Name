@@ -25,11 +25,12 @@ hiddenObjects.objectsToAdd = {
 	{ name = "VisionWard", objectType = "wards", spellName = "VisionWard", color = 0x00FF00FF, range = 1450, duration = 180000, icon = "yellowPoint"},
 	{ name = "SightWard", objectType = "wards", spellName = "SightWard", color = 0x0000FF00, range = 1450, duration = 180000, icon = "greenPoint"},
 	{ name = "WriggleLantern", objectType = "wards", spellName = "WriggleLantern", color = 0x0000FF00, range = 1450, duration = 180000, icon = "greenPoint"},
-	{ name = "ShacoBox", objectType = "boxes", spellName = "JackInTheBox", color = 0x00FF0000, range = 300, duration = 60000, icon = "redPoint"},
+	{ name = "Jack In The Box", objectType = "boxes", spellName = "JackInTheBox", color = 0x00FF0000, range = 300, duration = 60000, icon = "redPoint"},
+	{ name = "Cupcake Trap", objectType = "traps", spellName = "CaitlynYordleTrap", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
+	{ name = "Noxious Trap", objectType = "traps", spellName = "Bushwhack", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
+	-- to confirm
 	{ name = "MaokaiSproutling", objectType = "boxes", spellName = "MaokaiSapling2", color = 0x00FF0000, range = 300, duration = 35000, icon = "redPoint"},
 	{ name = "TeemoMushroom", objectType = "traps", spellName = "TeemoMushroom", color = 0x00FF0000, range = 300, duration = 600000, icon = "cyanPoint"},
-	{ name = "CaitlynTrap", objectType = "traps", spellName = "CaitlynYordleTrap", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
-	{ name = "Nidalee_Spear", objectType = "traps", spellName = "Nidalee_Spear", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
 }
 hiddenObjects.icons = {
 	cyanPoint = { spriteFile = "PingMarkerCyan_8", }, 
