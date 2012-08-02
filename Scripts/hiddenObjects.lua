@@ -8,7 +8,7 @@
 		
 		UPDATES :
 		v0.1				initial release
-		
+		v0.1b				change spells names for 3 champs
 		
 		USAGE :
 		Hold shift key to see the hidden object's range.
