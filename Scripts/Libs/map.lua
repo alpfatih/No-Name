@@ -8,6 +8,7 @@
 		UPDATES :
 		v0.1				initial release
 		v0.1b				added size infos
+		v0.1c				added index + check
 		
 		USAGE :
 		Load the libray from your script
@@ -16,13 +17,15 @@
 		map.shortName -> return you the shorted map name (usefull for using it in table)
 ]]
 
-map = {}
-map.name, map.shortName = "unknown" , "unknown"
+if map ~= nil and map.index ~= 0 then return end
+
+map = {index = 0, name = "unknown", shortName = "unknown", min = {x = 0, y = 0,}, max = {x = 0, y = 0}, x = 0, y = 0, }
 for i = 1, objManager.maxObjects do
 	local object = objManager:getObject(i)
 	if object ~= nil then
 		if object.type == "obj_Shop" and object.team == TEAM_BLUE then
 			if math.floor(object.x) == -175 and math.floor(object.y) == 163 and math.floor(object.z) == 1056 then
+				map.index = 1
 				map.name = "Summoner's Rift"
 				map.shortName = "summonerRift"
 				map.min = {x = -538, y = -165}
@@ -30,6 +33,7 @@ for i = 1, objManager.maxObjects do
 				map.x, map.y = 14817, 14692
 				break
 			elseif math.floor(object.x) == -217 and math.floor(object.y) == 276 and math.floor(object.z) == 7039 then		--ok
+				map.index = 2
 				map.name = "The Twisted Treeline"
 				map.shortName = "twistedTreeline"
 				map.min = {x = -996, y = -1239}
@@ -37,6 +41,7 @@ for i = 1, objManager.maxObjects do
 				map.x, map.y = 15116, 15116
 				break
 			elseif math.floor(object.x) == 556 and math.floor(object.y) == 191 and math.floor(object.z) == 1887 then		--ok
+				map.index = 3
 				map.name = "The Proving Grounds"
 				map.shortName = "provingGrounds"
 				map.min = {x = -56, y = -38}
@@ -44,6 +49,7 @@ for i = 1, objManager.maxObjects do
 				map.x, map.y = 12876, 12877
 				break
 			elseif math.floor(object.x) == 16 and math.floor(object.y) == 168 and math.floor(object.z) == 4452 then
+				map.index = 4
 				map.name = "The Crystal Scar"
 				map.shortName = "crystalScar"
 				map.min = {x = -15, y = 0}
