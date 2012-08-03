@@ -1,4 +1,4 @@
-if player.charName == "Leblanc" then
+if GetMyHero().charName == "Leblanc" then
 
 --[[
                     Leblanc Helper v1.0b by ikita
@@ -262,7 +262,7 @@ if player.charName == "Leblanc" then
                            
                             if target ~= nil and target.team ~= player.team and scriptActive == true then
                                     hero = findHeroNearestMouse()
-                                    if invSlot ~= nil and player:GetDistance(target) < 650 then
+                                    if invSlot ~= nil then
                                             CastSpell(invSlot, hero)
                                     end
                                     if lastSpell == "LeblancChaosOrb" then
