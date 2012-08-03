@@ -1,3 +1,5 @@
+if GetMyHero().charName == "Soraka" then
+
 --[[
 	SORAKA SLACKER v8
 	By Ivan[russia]
@@ -280,17 +282,17 @@ function AutoUlt()
 end
 
 function AutoSilence(object)
-	if object ~= nil and object.name == "Data\Particles\FallenOne_nova.troy" and object.team == TEAM_ENEMY then 
-		if player:GetSpellData(_R).level > 0 and  player:CanUseSpell(_R) == READY and SetupAntiKarthus  then
-			players = GetPlayers(player.team, false, true)
-			for i=1,#players,1 do
-				if karthus:CalculateMagicDamage(players[i],(400 * karthus.level/11 + karthus.ap * 0.6) *  1.2)  > players[i].health then
-					CastSpell(_R)
-					PrintChat("SORAKA SLACK >> AntiKarthus Ultimate!")
-				end
-			end
-		end
-	end
+--	if object ~= nil and object.name == "Data\Particles\FallenOne_nova.troy" and object.team ~= GetMyHero.team then 
+--		if player:GetSpellData(_R).level > 0 and  player:CanUseSpell(_R) == READY and SetupAntiKarthus  then
+--			players = GetPlayers(player.team, false, true)
+--			for i=1,#players,1 do
+--				if karthus:CalculateMagicDamage(players[i],(400 * karthus.level/11 + karthus.ap * 0.6) *  1.2)  > players[i].health then
+--					CastSpell(_R)
+--					PrintChat("SORAKA SLACK >> AntiKarthus Ultimate!")
+--				end
+--			end
+--		end
+--	end
 end
 
 function AutoHeal()
@@ -446,3 +448,4 @@ end
 	
 	end
 
+end
