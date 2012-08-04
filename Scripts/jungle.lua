@@ -2,8 +2,8 @@
         Script: Jungle Display v0.1d
 		Author: SurfaceS
 		
-		required libs : 		map
-		required sprites : 		Jungle Sprites
+		required libs : 		map, start, gameOver, minimap (if jungle.useMiniMapVersion = true)
+		required sprites : 		Jungle Sprites (if jungle.useSprites = true)
 		exposed variables : 	jungle, file_exists
 		
 		UPDATES :
@@ -11,6 +11,7 @@
 		v0.1b					added twisted treeline + ping and chat functions.
 		v0.1c					added ingame time.
 		v0.1d					added advice on/off by click + send chat respawn on click
+		v0.1e					added use minimap only mode, unload on game over -> use "start" and "gameOver" lib now.
 		
 		USAGE :
 		The script allow you to move and rotate the display
@@ -37,7 +38,8 @@ if LIB_PATH == nil then LIB_PATH = SCRIPT_PATH.."Libs/" end
 if SPRITE_PATH == nil then SPRITE_PATH = SCRIPT_PATH:gsub("\\", "/"):gsub("/Scripts", "").."Sprites/" end
 if myHero == nil then myHero = GetMyHero() end
 if map == nil then dofile(LIB_PATH.."map.lua") end
-if START_TICK == nil then START_TICK = tonumber(GetTickCount()) end
+if start == nil then dofile(LIB_PATH.."start.lua") end
+if gameOver == nil then dofile(LIB_PATH.."gameOver.lua") end
 
 jungle = {}
 
@@ -49,32 +51,9 @@ jungle.textOnRespawnBefore = true		-- print chat text before respawn
 jungle.adviceBefore = 20				-- time in second to advice before monster respawn
 jungle.adviceEnemyMonsters = true		-- advice enemy monster, or just our monsters
 jungle.useSprites = true				-- nice shown or not
+jungle.useMiniMapVersion = true			-- use minimap version (erase all display sprite or text)
 
 --[[      GLOBAL      ]]
-jungle.configFile = LIB_PATH.."jungle.cfg"
-jungle.display = {}
-jungle.display.x = 500
-jungle.display.y = 20
-jungle.display.rotation = 0
-jungle.display.move = false
-jungle.display.moveUnder = false
-jungle.display.rotateUnder = false
-jungle.display.size = 64
-
-jungle.shiftKeyPressed = false
-
-jungle.icon = { 
-	arrowPressed = { spriteFile = "ArrowPressed_16", }, 
-	arrowReleased = { spriteFile = "ArrowReleased_16", }, 
-	arrowSwitch = { spriteFile = "ArrowSwitch_16", }, 
-	advise = { spriteFile = "Advise_16", }, 
-	adviseRed = { spriteFile = "AdviseRed_16", },
-}
-jungle.teams = {
-	team100 = {	spriteFile = "TeamBlue_64",	},
-	team200 = {	spriteFile = "TeamRed_64",},
-	team300 = {	spriteFile = "TeamNeutral_64", },
-}
 
 jungle.monsters = {
 	summonerRift = {
@@ -298,31 +277,63 @@ jungle.monsters = {
 	},
 }
 
-function file_exists(name)
-   local f=io.open(name,"r")
-   if f~=nil then io.close(f) return true else return false end
-end
+jungle.shiftKeyPressed = false
 
-if file_exists(jungle.configFile) then
-    dofile(jungle.configFile)
-end
+if jungle.useMiniMapVersion == true then
+	if minimap == nil then dofile(LIB_PATH.."minimap.lua") end
+else
+	jungle.configFile = LIB_PATH.."jungle.cfg"
+	jungle.display = {}
+	jungle.display.x = 500
+	jungle.display.y = 20
+	jungle.display.rotation = 0
+	jungle.display.move = false
+	jungle.display.moveUnder = false
+	jungle.display.rotateUnder = false
+	jungle.display.size = 64
 
-function jungle.writeConfigs()
-    local file = io.open(jungle.configFile, "w")
-    if file then
-        local var1 = jungle.display.x
-        local var2 = jungle.display.y
-		local var3 = jungle.display.rotation
-        file:write("jungle.display.x = "..var1.."\njungle.display.y = "..var2.."\njungle.display.rotation = "..var3.."\n")
-        file:close()
-    end
-end
-
-function jungle.returnSprite(file)
-	if file_exists(SPRITE_PATH..file) == true then
-		return createSprite(file)
+	function file_exists(name)
+	   local f=io.open(name,"r")
+	   if f~=nil then io.close(f) return true else return false end
 	end
-	return createSprite("empty.dds")
+
+	if file_exists(jungle.configFile) then
+		dofile(jungle.configFile)
+	end
+
+	function jungle.writeConfigs()
+		local file = io.open(jungle.configFile, "w")
+		if file then
+			local var1 = jungle.display.x
+			local var2 = jungle.display.y
+			local var3 = jungle.display.rotation
+			file:write("jungle.display.x = "..var1.."\njungle.display.y = "..var2.."\njungle.display.rotation = "..var3.."\n")
+			file:close()
+		end
+	end
+
+	if jungle.useSprites then
+		jungle.icon = { 
+			arrowPressed = { spriteFile = "ArrowPressed_16", }, 
+			arrowReleased = { spriteFile = "ArrowReleased_16", }, 
+			arrowSwitch = { spriteFile = "ArrowSwitch_16", }, 
+			advise = { spriteFile = "Advise_16", }, 
+			adviseRed = { spriteFile = "AdviseRed_16", },
+		}
+		jungle.teams = {
+			team100 = {	spriteFile = "TeamBlue_64",	},
+			team200 = {	spriteFile = "TeamRed_64",},
+			team300 = {	spriteFile = "TeamNeutral_64", },
+		}
+
+		function jungle.returnSprite(file)
+			if file_exists(SPRITE_PATH..file) == true then
+				return createSprite(file)
+			end
+			return createSprite("empty.dds")
+		end
+		
+	end
 end
 
 function jungle.timerSecondLeft(tick, respawn, deathTick)
@@ -352,34 +363,55 @@ function jungle.mouseIsUnder(x, y, sizeX, sizeY)
 	return (posX >= x and posX <= x + sizeX and posY >= y and posY <= y + sizeY)
 end
 
-function jungle.drawHandler()
-	local monsterCount = 0
-	for i,monster in pairs(jungle.monsters[map.shortName]) do
-		if monster.isSeen == true then
-			if jungle.useSprites then 
-				jungle.monsters[map.shortName][i].sprite:Draw(jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFF)
-				if monster.advise then jungle.icon.advise.sprite:Draw(jungle.display.x + monster.shift.x + jungle.display.size - 18,jungle.display.y - 2,0xFF) end
-			else
-				DrawText(monster.name..(monster.advise and " *" or ""),17,jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFFFF0000)
-			end
-			
-			for j,camp in pairs(monster.camps) do
-				if camp.status ~= 0 then
-					if jungle.useSprites then
-						jungle.teams["team"..camp.team].sprite:Draw(jungle.display.x + camp.shift.x,jungle.display.y + camp.shift.y,0xFF)
-						DrawText(camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
-					else
-						DrawText(camp.team.." - "..camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
+if jungle.useMiniMapVersion then
+	function jungle.drawHandler()
+		for i,monster in pairs(jungle.monsters[map.shortName]) do
+			if monster.isSeen == true then
+				for j,camp in pairs(monster.camps) do
+					if camp.status == 2 then
+						DrawText("X",16,camp.minimap.x - 4, camp.minimap.y - 5, camp.drawColor)
+					elseif camp.status == 4 then
+						DrawText(camp.drawText,16,camp.minimap.x - 9, camp.minimap.y - 5, camp.drawColor)
 					end
 				end
 			end
-			monsterCount = monsterCount + 1
 		end
 	end
-	if monsterCount > 0 then
-		--jungle.icon[(jungle.display.moveUnder and "arrowPressed" or "arrowReleased")].sprite:Draw(jungle.display.x,jungle.display.y,0xFF)
-		jungle.icon.arrowPressed.sprite:Draw(jungle.display.x,jungle.display.y,(jungle.shiftKeyPressed and 0xFF or 0xAA))
-		jungle.icon.arrowSwitch.sprite:Draw(jungle.display.x+16,jungle.display.y,(jungle.shiftKeyPressed and 0xFF or 0xAA))
+elseif jungle.useSprites then
+	function jungle.drawHandler()
+		local monsterCount = 0
+		for i,monster in pairs(jungle.monsters[map.shortName]) do
+			if monster.isSeen == true then
+				jungle.monsters[map.shortName][i].sprite:Draw(jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFF)
+				if monster.advise then jungle.icon.advise.sprite:Draw(jungle.display.x + monster.shift.x + jungle.display.size - 18,jungle.display.y - 2,0xFF) end
+				for j,camp in pairs(monster.camps) do
+					if camp.status ~= 0 then
+						jungle.teams["team"..camp.team].sprite:Draw(jungle.display.x + camp.shift.x,jungle.display.y + camp.shift.y,0xFF)
+						DrawText(camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
+					end
+				end
+				monsterCount = monsterCount + 1
+			end
+		end
+		if monsterCount > 0 then
+			jungle.icon.arrowPressed.sprite:Draw(jungle.display.x,jungle.display.y,(jungle.shiftKeyPressed and 0xFF or 0xAA))
+			jungle.icon.arrowSwitch.sprite:Draw(jungle.display.x+16,jungle.display.y,(jungle.shiftKeyPressed and 0xFF or 0xAA))
+		end
+	end
+else
+	function jungle.drawHandler()
+		local monsterCount = 0
+		for i,monster in pairs(jungle.monsters[map.shortName]) do
+			if monster.isSeen == true then
+				DrawText(monster.name..(monster.advise and " *" or ""),17,jungle.display.x + monster.shift.x,jungle.display.y + monster.shift.y,0xFFFF0000)
+				for j,camp in pairs(monster.camps) do
+					if camp.status ~= 0 then
+						DrawText(camp.team.." - "..camp.drawText,17,jungle.display.x + camp.shift.x + 10,jungle.display.y + camp.shift.y - 3,camp.drawColor)
+					end
+				end
+				monsterCount = monsterCount + 1
+			end
+		end
 	end
 end
 
@@ -422,15 +454,16 @@ function jungle.removeCreep(object)
 end
 
 function jungle.msgHandler(msg, key)
-	if key == 16 then jungle.shiftKeyPressed = (msg == KEY_DOWN) end
-	if jungle.display.moveUnder and msg == WM_LBUTTONDOWN then
+	if key == 16 then 
+		jungle.shiftKeyPressed = (msg == KEY_DOWN)
+	elseif jungle.useMiniMapVersion == false and jungle.display.moveUnder and msg == WM_LBUTTONDOWN then
 		jungle.display.move = true
-	elseif jungle.display.move and msg == WM_LBUTTONUP then
+	elseif jungle.useMiniMapVersion == false and jungle.display.move and msg == WM_LBUTTONUP then
 		jungle.display.move = false
 		jungle.display.moveUnder = false
 		jungle.display.cursorShift = nil
 		jungle.writeConfigs()
-	elseif jungle.display.rotateUnder and msg == WM_LBUTTONDOWN then
+	elseif jungle.useMiniMapVersion == false and jungle.display.rotateUnder and msg == WM_LBUTTONDOWN then
 		jungle.display.rotation = (jungle.display.rotation == 3 and 0 or jungle.display.rotation + 1)
 		jungle.writeConfigs()
 	elseif jungle.shiftKeyPressed and msg == WM_LBUTTONDOWN then
@@ -465,6 +498,10 @@ function jungle.deleteObjHandler(object)
 end
 
 function jungle.tickHandler()
+	if gameOver.isOver == true then
+		jungle.unload()
+		return
+	end
 	local tick = GetTickCount()
 	local monsterCount = 0
 	for i,monster in pairs(jungle.monsters[map.shortName]) do
@@ -494,13 +531,16 @@ function jungle.tickHandler()
 			]]
 			-- temp fix until camp.showOnMinimap work
 			-- not so good
+			if jungle.useMiniMapVersion and camp.object ~= nil then
+				camp.minimap = miniMap.ToMinimapPoint(camp.object.x,camp.object.z)
+			end
 			if camp.object ~= nil and campStatus == 0 then
 				if (camp.status == 1 or camp.status == 2) then
 					campStatus = 4
 					camp.deathTick = tick
 					camp.advisedBefore = false
 					camp.advised = false
-					camp.respawnTime = math.ceil((tick - START_TICK) / 1000) + monster.respawn
+					camp.respawnTime = math.ceil((tick - start.tick) / 1000) + monster.respawn
 					camp.respawnText = (camp.enemyTeam and "Enemy " or "")..monster.name.." respawn at "..jungle.timerText(camp.respawnTime)
 				elseif (camp.status == 4) then
 					campStatus = 4
@@ -508,7 +548,7 @@ function jungle.tickHandler()
 					campStatus = 3
 				end
 			end
-			if campStatus ~= 0 then
+			if jungle.useMiniMapVersion == false and campStatus ~= 0 then
 				if jungle.display.rotation == 0 then
 					camp.shift = { x = monsterCount * jungle.display.size, y = (camp.enemyTeam and jungle.display.size + 26 or jungle.display.size + 6), }
 				elseif jungle.display.rotation == 1 then
@@ -552,20 +592,24 @@ function jungle.tickHandler()
 					end
 					camp.drawText = " "..jungle.timerText(secondLeft)
 					camp.drawColor = 0xFFFFFF00
-				elseif camp.status == 5 then			-- empty from camp disabled on minimap
+				elseif camp.status == 5 then			-- camp found empty (not using yet)
 					camp.drawText = "   -"
 					camp.drawColor = 0xFFFF0000
 				end
 			end
 			if jungle.shiftKeyPressed and camp.status == 4 then
 				camp.drawText = " "..(camp.respawnTime ~= nil and jungle.timerText(camp.respawnTime) or "")
-				camp.textUnder = (jungle.display.move == false and jungle.display.moveUnder == false and jungle.display.rotateUnder == false and jungle.mouseIsUnder(jungle.display.x + camp.shift.x, jungle.display.y + camp.shift.y, jungle.display.size, 16))
+				if jungle.useMiniMapVersion then 
+					camp.textUnder = (jungle.mouseIsUnder(camp.minimap.x - 9, camp.minimap.y - 5, 20, 8))
+				else
+					camp.textUnder = (jungle.display.move == false and jungle.display.moveUnder == false and jungle.display.rotateUnder == false and jungle.mouseIsUnder(jungle.display.x + camp.shift.x, jungle.display.y + camp.shift.y, jungle.display.size, 16))
+				end
 			else
 				camp.textUnder = false
 			end
 		end
-		-- update monster pos
-		if monster.isSeen == true then
+			-- update monster pos
+		if monster.isSeen == true and jungle.useMiniMapVersion == false then
 			if jungle.display.rotation == 0 or jungle.display.rotation == 2 then
 				monster.shift = { x = monsterCount * jungle.display.size, y = 0, }
 			else
@@ -576,21 +620,27 @@ function jungle.tickHandler()
 		end
 	end
 	-- update icon mouse
-	if jungle.display.move == true then
-		if jungle.display.cursorShift == nil or jungle.display.cursorShift.x == nil or jungle.display.cursorShift.y == nil then
-			jungle.display.cursorShift = { x = GetCursorPos().x - jungle.display.x, y = GetCursorPos().y - jungle.display.y, }
+	if jungle.useMiniMapVersion == false then
+		if jungle.display.move == true then
+			if jungle.display.cursorShift == nil or jungle.display.cursorShift.x == nil or jungle.display.cursorShift.y == nil then
+				jungle.display.cursorShift = { x = GetCursorPos().x - jungle.display.x, y = GetCursorPos().y - jungle.display.y, }
+			else
+				jungle.display.x = GetCursorPos().x - jungle.display.cursorShift.x
+				jungle.display.y = GetCursorPos().y - jungle.display.cursorShift.y
+			end
 		else
-			jungle.display.x = GetCursorPos().x - jungle.display.cursorShift.x
-			jungle.display.y = GetCursorPos().y - jungle.display.cursorShift.y
+			jungle.display.moveUnder = (jungle.shiftKeyPressed and jungle.mouseIsUnder(jungle.display.x, jungle.display.y, 16, 16))
+			jungle.display.rotateUnder = (jungle.shiftKeyPressed and jungle.mouseIsUnder(jungle.display.x + 16, jungle.display.y, 16, 16))
 		end
-	else
-		jungle.display.moveUnder = (jungle.shiftKeyPressed and jungle.mouseIsUnder(jungle.display.x, jungle.display.y, 16, 16))
-		jungle.display.rotateUnder = (jungle.shiftKeyPressed and jungle.mouseIsUnder(jungle.display.x + 16, jungle.display.y, 16, 16))
 	end
 end
 
+function jungle.unload()
+	jungle = nil
+end
+
 if jungle.monsters[map.shortName] ~= nil then
-	if jungle.useSprites then
+	if jungle.useSprites and jungle.useMiniMapVersion == false then
 		-- load icons drawing sprites
 		for i,icon in pairs(jungle.icon) do
 			icon.sprite = jungle.returnSprite(icon.spriteFile..".dds")
@@ -602,10 +652,10 @@ if jungle.monsters[map.shortName] ~= nil then
 	end
 	-- load monster sprites and init values
 	for i,monster in pairs(jungle.monsters[map.shortName]) do
-		if jungle.useSprites then monster.sprite = jungle.returnSprite(monster.spriteFile..".dds") end
+		if jungle.useSprites and jungle.useMiniMapVersion == false then monster.sprite = jungle.returnSprite(monster.spriteFile..".dds") end
 		monster.isSeen = false
 		for j,camp in pairs(monster.camps) do
-			camp.enemyTeam = (camp.team ~= TEAM_NEUTRAL and camp.team ~= myHero.team)
+			camp.enemyTeam = (camp.team == start.teamEnnemy)
 			camp.status = 0
 			camp.drawText = ""
 			camp.drawColor = 0xFF00FF00
