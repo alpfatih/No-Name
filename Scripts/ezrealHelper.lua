@@ -1,12 +1,19 @@
-local player = GetMyHero()
-if player.charName == "Ezreal" then
+if GetMyHero().charName == "Ezreal" then
 
 --[[
-	Ezreal Helper v1.1d by ikita
+	Ezreal Helper v1.1e by ikita
 	Auto Q after each auto-atk
 ]]
 
---SETTINGS
+--Weird but necessary stuff that i'm too lazy to tidy up
+freq = GetTickCount()
+local iVar = 0
+local lastTime = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local nowX = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local nowZ = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local nowTime = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local lastX = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local lastZ = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
 local qAfterAA = true
 local qAfterAAKey = 71 -- G
 local alwaysQ = false
@@ -16,6 +23,13 @@ local blocked = false
 local justAA = false
 local AAtimer = 0
 local waitTime = 100 --if you have good ping, set it to a value higher than 100 ms. if you have bad ping then change this to zero.
+local difX = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local difZ = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local difTime = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local travelTime = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local predicX = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local predicZ = {-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99,-99}
+local targetValid = {false,false,false,false,false,false,false,false,false,false,false,false}
 --[[		Code		]]
 function altDoFile(name)
     dofile(debug.getinfo(1).source:sub(debug.getinfo(1).source:find(".*\\")):sub(2)..name)
@@ -23,9 +37,7 @@ end
 
 altDoFile("libs/target_selector.lua")
 altDoFile("libs/vector.lua")
-altDoFile("libs/linear_prediction.lua")
 
-local lp = LinearPrediction:new(900,1.2)
 local ts = TargetSelector:new(TARGET_LOW_HP,900)
 ts.buildarray()
 
@@ -37,14 +49,55 @@ function SpellE(object, spellName)
 		AAtimer = GetTickCount()
 	end
 end
+
+function getPredFor(someName)
+
+end
+
+function linePredAll()
+	if GetTickCount() - freq > 0 then
+	freq = GetTickCount()
+		for i = 1, heroManager.iCount do
+			targetE = heroManager:GetHero(i)
+			if targetValid[i] then
+				nowTime[i] = GetTickCount()
+				nowX[i] = targetE.x
+				nowZ[i] = targetE.z
+				difX[i] = nowX[i] - lastX[i]
+				difZ[i] = nowZ[i] - lastZ[i]
+				difTime[i]  = nowTime[i] - lastTime[i]
+				travelTime[i] = GetMyHero():GetDistance(targetE)/1.2 --projectile speed = 1.2
+				predicX[i] = nowX[i] + (difX[i]/difTime[i])*travelTime[i]
+				predicZ[i] = nowZ[i] + (difZ[i]/difTime[i])*travelTime[i]
+			end
+			if targetE.team ~= GetMyHero().team and targetE.visible and targetE.dead == false then
+				targetValid[i] = true
+				lastTime[i] = GetTickCount()
+				lastX[i] = targetE.x
+				lastZ[i] = targetE.z
+				
+			else
+			
+				targetValid[i] = false
+				
+			end
+		end
+	end
+end
+
 function tickHandlerE()
 	ts:tick()
-    lp:tick()
     if GetTickCount() - AAtimer > 600 then
     	justAA = false
     end
 	if ts.target ~= nil and player:CanUseSpell(_Q) == READY then
-	    predic = lp:getPredictionFor(ts.target.name)
+		for i = 1, heroManager.iCount do
+			local matchI = heroManager:GetHero(i)
+			if ts.target.name == matchI.name then
+				iVar = i
+			end
+		end
+
 	    blocked = false
 	    for k = 1, objManager.maxObjects do
         	local minionObjectE = objManager:GetObject(k)
@@ -56,13 +109,13 @@ function tickHandlerE()
 --        			PrintChat("blocked")
 --        		end
         		--Calculate minion block
-        		if  player:GetDistance(minionObjectE) < math.sqrt((tx - ex)*(tx - ex) + (tz - ez)*(tz - ez)) then
+        		if  player:GetDistance(minionObjectE) < 900 then
         			--Player coordinates
         			ex = player.x
         			ez = player.z
         			--End coordinates
-        			tx = predic.x
-        			tz = predic.z
+        			tx = predicX[iVar]
+        			tz = predicZ[iVar]
         			--Distance apart
         			dx = ex - tx
         			dz = ez - tz
@@ -84,14 +137,15 @@ function tickHandlerE()
         	end
     	end
 		if blocked == false and alwaysQ then
-        	CastSpell(_Q, predic.x, predic.z)
+        	CastSpell(_Q, predicX[iVar], predicZ[iVar])
         end
         if blocked == false and qAfterAA and justAA and GetTickCount() - AAtimer > waitTime then
-        	CastSpell(_Q, predic.x, predic.z)
+        	CastSpell(_Q, predicX[iVar], predicZ[iVar])
         	justAA = false
         end
 	end
 end
+
 
 function HotkeyE(msg,key)
 	if msg == KEY_DOWN then 
@@ -121,6 +175,7 @@ end
 
 if player.charName == "Ezreal" then 
 	BoL:addTickHandler(tickHandlerE,10)
+	BoL:addTickHandler(linePredAll)
 	BoL:addMsgHandler(HotkeyE)
 	BoL:addProcessSpellHandler(SpellE)
 	PrintChat(" >> Ezreal Helper loaded!")
