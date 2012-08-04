@@ -40,7 +40,7 @@ for i = 1, objManager.maxObjects, 1 do
 	end
 end
 
-if start.save.osTime ~= nil and (start.save.osTime > (start.osTime - 90) or start.gameStarted) then
+if start.save.osTime ~= nil and (start.save.osTime > (start.osTime - 120) or start.gameStarted) then
 	start.window.W = start.save.window.W
 	start.window.H = start.save.window.H
 	start.tick = start.save.tick
