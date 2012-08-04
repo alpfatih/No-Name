@@ -1,5 +1,5 @@
 --[[
-    Script: Start Lib v0.1
+    Script: Start Lib v0.1b
     Author: SurfaceS
 	Goal : save the start values
 	
@@ -7,6 +7,7 @@
 	Exposed variables : 	start, file_exists
 
 	v0.1					initial release
+	v0.1b					added system clock (lol is based on day)
 ]]
 
 if start ~= nil then return end
@@ -27,6 +28,7 @@ start.gameStarted = false
 -- init values
 start.window = {W=tonumber((WINDOW_W ~= nil and WINDOW_W or 0)),H=tonumber((WINDOW_H ~= nil and WINDOW_H or 0))}
 start.tick = tonumber(GetTickCount())
+start.osTime = os.time(t)
 start.teamEnnemy = tonumber((TEAM_ENEMY ~= nil and TEAM_ENEMY or 0))
 if file_exists(start.configFile) then dofile(start.configFile) end
 
@@ -38,7 +40,7 @@ for i = 1, objManager.maxObjects, 1 do
 	end
 end
 
-if start.save.tick ~= nil and (start.save.tick > (start.tick - 90000) or start.gameStarted) then
+if start.save.osTime ~= nil and (start.save.osTime > (start.osTime - 120) or start.gameStarted) then
 	start.window.W = start.save.window.W
 	start.window.H = start.save.window.H
 	start.tick = start.save.tick
@@ -46,9 +48,11 @@ if start.save.tick ~= nil and (start.save.tick > (start.tick - 90000) or start.g
 else
 	start.file = io.open(start.configFile, "w")
     if start.file then
-        start.file:write("start.save.window = { W="..start.window.W..", H="..start.window.H.." }\n")
+        start.file:write("start.save.osTime = "..start.osTime.."\n")
+		start.file:write("start.save.window = { W="..start.window.W..", H="..start.window.H.." }\n")
 		start.file:write("start.save.tick = "..start.tick.."\n")
 		start.file:write("start.save.teamEnnemy = "..start.teamEnnemy.."\n")
+		
         start.file:close()
     end
 	start.file = nil
