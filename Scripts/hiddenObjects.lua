@@ -1,14 +1,16 @@
 --[[
-        Script: Hidden Objects Display v0.1
+        Script: Hidden Objects Display v0.1d
 		Author: SurfaceS
 		
-		required libs : 		minimap
+		required libs : 		minimap, gameOver, start
 		required sprites : 		Hidden Objects Sprites
 		exposed variables : 	hiddenObjects, file_exists
 		
 		UPDATES :
-		v0.1				initial release
-		v0.1b				change spells names for 3 champs (thx TRUS)
+		v0.1					initial release
+		v0.1b					change spells names for 3 champs (thx TRUS)
+		v0.1c					change spells names for teemo
+		v0.1d					fix the perma show, added eng game
 		
 		USAGE :
 		Hold shift key to see the hidden object's range.
@@ -19,6 +21,8 @@ if SCRIPT_PATH == nil then SCRIPT_PATH = debug.getinfo(1).source:sub(debug.getin
 if LIB_PATH == nil then LIB_PATH = SCRIPT_PATH.."Libs/" end
 if SPRITE_PATH == nil then SPRITE_PATH = SCRIPT_PATH:gsub("\\", "/"):gsub("/Scripts", "").."Sprites/" end
 if myHero == nil then myHero = GetMyHero() end
+if gameOver == nil then dofile(LIB_PATH.."gameOver.lua") end
+if start == nil then dofile(LIB_PATH.."start.lua") end
 
 hiddenObjects = {}
 hiddenObjects.objectsToAdd = {
@@ -28,9 +32,9 @@ hiddenObjects.objectsToAdd = {
 	{ name = "Jack In The Box", objectType = "boxes", spellName = "JackInTheBox", color = 0x00FF0000, range = 300, duration = 60000, icon = "redPoint"},
 	{ name = "Cupcake Trap", objectType = "traps", spellName = "CaitlynYordleTrap", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
 	{ name = "Noxious Trap", objectType = "traps", spellName = "Bushwhack", color = 0x00FF0000, range = 300, duration = 240000, icon = "cyanPoint"},
+	{ name = "Noxious Trap", objectType = "traps", spellName = "BantamTrap", color = 0x00FF0000, range = 300, duration = 600000, icon = "cyanPoint"},
 	-- to confirm
 	{ name = "MaokaiSproutling", objectType = "boxes", spellName = "MaokaiSapling2", color = 0x00FF0000, range = 300, duration = 35000, icon = "redPoint"},
-	{ name = "TeemoMushroom", objectType = "traps", spellName = "TeemoMushroom", color = 0x00FF0000, range = 300, duration = 600000, icon = "cyanPoint"},
 }
 hiddenObjects.icons = {
 	cyanPoint = { spriteFile = "PingMarkerCyan_8", }, 
@@ -64,10 +68,25 @@ function hiddenObjects.returnSprite(file)
 	return createSprite("empty.dds")
 end
 
+function hiddenObjects.objectExist(objectType, x, z)
+	for i,obj in pairs(hiddenObjects.objects) do
+		if object == nil and obj.objectType == objectType and pos.x > x - 100 and pos.x < x + 100 and pos.z > z - 100 and pos.z < z + 100 then
+			return i
+		end
+	end	
+	return nil
+end
+
 function hiddenObjects.addObject(objectToAdd, x, y, z, fromSpell, object)
 	-- add the object
 	local objId = objectToAdd.objectType..(math.floor(x) + math.floor(z))
 	local tick = GetTickCount()
+	--check if exist
+	local objectExist = hiddenObjects.objectExist(objectToAdd.objectType, x, z)
+	if objectExist ~= nil then
+		hiddenObjects.objects[objId] = hiddenObjects.objects[objectExist]
+		hiddenObjects.objects[objectExist] = nil
+	end
 	if hiddenObjects.objects[objId] == nil then
 		hiddenObjects.objects[objId] = {
 			object = object,
@@ -100,6 +119,10 @@ function hiddenObjects.createObjHandler(object)
 end
 
 function hiddenObjects.addProcessSpell(object,spellName,spellLevel, posStart, posEnd)
+	-- debug to show spells
+	--if object ~= nil and object.name == myHero.name then
+		--PrintChat(spellName)
+	--end
 	if object ~= nil and object.team ~= myHero.team then
 		for i,objectToAdd in pairs(hiddenObjects.objectsToAdd) do
 			if spellName == objectToAdd.spellName then
@@ -123,6 +146,7 @@ function hiddenObjects.deleteObjHandler(object)
 end
 
 function hiddenObjects.drawHandler()
+	if gameOver.isOver == true then return end
 	for i,obj in pairs(hiddenObjects.objects) do
 		if obj.visible == true then
 			DrawCircle(obj.pos.x, obj.pos.y, obj.pos.z, 100, obj.color)
@@ -144,10 +168,13 @@ function hiddenObjects.drawHandler()
 end
 
 function hiddenObjects.tickHandler()
+	if gameOver.isOver == true then return end
 	local tick = GetTickCount()
 	for i,obj in pairs(hiddenObjects.objects) do
-		if obj.object == nil or (obj.object ~= nil and obj.object.team ~= 0 and obj.object.team ~= myHero.team) then
+		if obj.object == nil or (obj.object ~= nil and obj.object.team == start.teamEnnemy and obj.object.dead == false) then
 			obj.visible = true
+		else
+			obj.visible = false
 		end
 		if tick > obj.endTick or (obj.object ~= nil and obj.object.team == myHero.team) then
 			hiddenObjects.objects[i] = nil
@@ -175,5 +202,6 @@ end
 BoL:addDrawHandler(hiddenObjects.drawHandler)
 BoL:addProcessSpellHandler(hiddenObjects.addProcessSpell)
 BoL:addCreateObjHandler(hiddenObjects.createObjHandler)
+BoL:addDeleteObjHandler(hiddenObjects.deleteObjHandler)
 BoL:addTickHandler(hiddenObjects.tickHandler, 250)
 BoL:addMsgHandler(hiddenObjects.msgHandler)
