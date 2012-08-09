@@ -9,6 +9,7 @@
 		UPDATES :
 		v1.0					initial release / port by Kilua
 		v1.1					added support for all maps / reworked
+		v1.1b					reworked wizard handle
 		
 		USAGE :
 		Load the libray from your script
@@ -60,11 +61,13 @@ function miniMap.load()
     else
         PrintChat(" >> miniMap Lib: Config not found. Starting wizard to make a new one")
         if file_exists(miniMap.configScript) then
-			dofile(miniMap.configScript)
+        	if miniMap.state ~= 2 then
 			miniMap.state = 2
+			dofile(miniMap.configScript)
+		end
         else
-            PrintChat(" >> miniMap Lib: [ERROR] Wizard not found. You have to download it and put to libs folder!")
             miniMap.state = 3
+            PrintChat(" >> miniMap Lib: [ERROR] Wizard not found. You have to download it and put to libs folder!")
         end
     end
 	return miniMap.state
