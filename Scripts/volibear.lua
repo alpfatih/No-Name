@@ -17,7 +17,7 @@ function tickHandler()
 			local baseHP = (470 + 92*player.level) * 1.03
 			local biteDamage = player:CalcDamage(target, math.floor( (((player:GetSpellData(_W).level-1)*45) + 80 + (player.maxHealth - baseHP)*0.15) * (1 + (target.maxHealth - target.health)/(target.maxHealth))))
 			
-			if target ~= nil and target.visible == true and target.team == TEAM_ENEMY and target.dead == false and player:GetDistance(target) < 400 and player:CanUseSpell(_W) == READY then
+			if target ~= nil and target.visible == true and target.team ~= player.team and target.dead == false and player:GetDistance(target) < 400 and player:CanUseSpell(_W) == READY then
 				if target.health < biteDamage then
 					CastSpell(_W, target)
 				end
