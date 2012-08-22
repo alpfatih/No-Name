@@ -9,6 +9,7 @@
 		UPDATES :
 		v1.1					initial release / port by Kilua
 		v1.2					added support for all maps / reworked
+		v1.2b					reworked clean
 ]]
 
 if miniMap == nil then return end
@@ -40,15 +41,15 @@ function miniMap.wizard.writeConfig()
     if file then
         file:write("miniMap.offsets = {x1 = "..miniMap.offsets.x1..", y1 = "..miniMap.offsets.y1..", x2 = "..miniMap.offsets.x2..", y2 = "..miniMap.offsets.y2.." }")
         file:close()
+        
     end
-	PrintChat(" >> MiniMap Marks Wizard Setup: Config saved. Bye-bye! Thanks for using!")
 	if miniMap.load() == 1 then
-		-- clean wizard
-		miniMap.wizard = nil
+		PrintChat(" >> MiniMap Marks Wizard Setup: Config saved. Bye-bye! Thanks for using!")
 	end
 end
 
 function miniMap.wizard.tickHandler()
+	if miniMap.state ~= 2 then return end
 	local tick = GetTickCount()
 	if miniMap.wizard.pingTick < tick then
 		miniMap.wizard.pingTick = tick + 3000
@@ -69,6 +70,7 @@ function miniMap.wizard.tickHandler()
 end
 
 function miniMap.wizard.drawHandler()
+	if miniMap.state ~= 2 then return end
 	DrawText("Top Right:",14,300 - 60,200,0xFF80FF00)
 	DrawText("Bottom Left:",14,300 - 85,225,0xFF80FF00)
 	DrawText("Minimap Wizard Setup v1.2",17,350,170,0xFF80FF00)
@@ -89,6 +91,7 @@ function miniMap.wizard.drawHandler()
 end
 
 function miniMap.wizard.msgHandler(msg, key)
+	if miniMap.state ~= 2 then return end
 	if key == 16 then
 		miniMap.wizard.shiftKeyPressed = (msg == KEY_DOWN)
 	elseif msg == WM_LBUTTONDOWN then

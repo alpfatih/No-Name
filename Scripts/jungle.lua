@@ -343,7 +343,7 @@ end
 function jungle.timerText(seconds)
 	local minutes = seconds / 60
 	if minutes > 59 then
-		return string.format("%i:%02i:%02i", minutes / 60, minutes, seconds % 60)
+		return string.format("%i:%02i:%02i", minutes / 60, minutes % 60, seconds % 60)
 	else
 		return string.format("%i:%02i", minutes, seconds % 60)
 	end
@@ -365,6 +365,7 @@ end
 
 if jungle.useMiniMapVersion then
 	function jungle.drawHandler()
+		if gameOver.isOver == true then return end
 		for i,monster in pairs(jungle.monsters[map.shortName]) do
 			if monster.isSeen == true then
 				for j,camp in pairs(monster.camps) do
@@ -379,6 +380,7 @@ if jungle.useMiniMapVersion then
 	end
 elseif jungle.useSprites then
 	function jungle.drawHandler()
+		if gameOver.isOver == true then return end
 		local monsterCount = 0
 		for i,monster in pairs(jungle.monsters[map.shortName]) do
 			if monster.isSeen == true then
@@ -400,6 +402,7 @@ elseif jungle.useSprites then
 	end
 else
 	function jungle.drawHandler()
+		if gameOver.isOver == true then return end
 		local monsterCount = 0
 		for i,monster in pairs(jungle.monsters[map.shortName]) do
 			if monster.isSeen == true then
@@ -498,10 +501,7 @@ function jungle.deleteObjHandler(object)
 end
 
 function jungle.tickHandler()
-	if gameOver.isOver == true then
-		jungle.unload()
-		return
-	end
+	if gameOver.isOver == true then return end
 	local tick = GetTickCount()
 	local monsterCount = 0
 	for i,monster in pairs(jungle.monsters[map.shortName]) do

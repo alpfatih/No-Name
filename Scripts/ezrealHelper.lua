@@ -36,7 +36,7 @@ function altDoFile(name)
 end
 
 altDoFile("libs/target_selector.lua")
-altDoFile("libs/vector.lua")
+
 
 local ts = TargetSelector:new(TARGET_LOW_HP,900)
 ts.buildarray()
