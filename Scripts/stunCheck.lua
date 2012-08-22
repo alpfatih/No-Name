@@ -1,20 +1,19 @@
-player = GetMyHero()
-if player.charName ~= nil then
+if GetMyHero().charName ~= nil then
 --[[
-	Stun Alert v1.0
+	Stun Alert v1.1
 	Will show how many champions currently has stun/silence/supression/knockbacks
 ]]
 stunChamps = 999
-
+player = GetMyHero()
 --[[		Code		]]
 
-function drawHandlerS()
+local function drawHandlerS()
 	local number = countStun()
 	DrawText("Stuns: " .. number, 18, 200, 120, 0xFFFFFF00)
 end
 
 
-function countStun()
+local function countStun()
 	local stunFlag = 0
 	for i=1, heroManager.iCount do
 		targetS = heroManager:GetHero(i)
@@ -67,11 +66,6 @@ function countStun()
 					stunFlag = stunFlag + 1
 				end
 			end	
-			if targetS.charName == "Brand" then
-				if targetS:CanUseSpell(_Q) == 3 then
-					stunFlag = stunFlag + 1
-				end
-			end	
 			if targetS.charName == "Cassiopeia" then
 				if targetS:CanUseSpell(_R) == 3 then
 					stunFlag = stunFlag + 1
@@ -87,6 +81,11 @@ function countStun()
 					stunFlag = stunFlag + 1
 				end
 			end	
+			if targetS.charName == "Diana" then
+				if targetS:CanUseSpell(_E) == 3 then
+					stunFlag = stunFlag + 1
+				end
+			end
 			if targetS.charName == "Draven" then
 				if targetS:CanUseSpell(_E) == 3 then
 					stunFlag = stunFlag + 1

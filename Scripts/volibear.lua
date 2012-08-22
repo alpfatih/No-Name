@@ -6,10 +6,9 @@ if GetMyHero().charName == "Volibear" then
 
 
 --[[		Code		]]
-player = GetMyHero()
-sleepTick = 0
+local player = GetMyHero()
 
-function tickHandler()
+local function tickHandler()
 	if player:GetSpellData(_W).level > 0 and player:CanUseSpell(_W) == READY then
 		
 		for i=1, heroManager.iCount do
