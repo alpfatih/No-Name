@@ -70,7 +70,7 @@ end
 
 function hiddenObjects.objectExist(objectType, x, z)
 	for i,obj in pairs(hiddenObjects.objects) do
-		if object == nil and obj.objectType == objectType and pos.x > x - 100 and pos.x < x + 100 and pos.z > z - 100 and pos.z < z + 100 then
+		if obj.object == nil and obj.objectType == objectType and obj.pos.x > x - 100 and obj.pos.x < x + 100 and obj.pos.z > z - 100 and obj.pos.z < z + 100 then
 			return i
 		end
 	end	
