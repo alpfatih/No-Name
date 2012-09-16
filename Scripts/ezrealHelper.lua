@@ -38,7 +38,7 @@ end
 altDoFile("libs/target_selector.lua")
 
 
-local ts = TargetSelector:new(TARGET_LOW_HP,900)
+local ts = TargetSelector:new(TARGET_LOW_HP,1100)
 ts.buildarray()
 
 
@@ -90,7 +90,7 @@ function tickHandlerE()
     if GetTickCount() - AAtimer > 600 then
     	justAA = false
     end
-	if ts.target ~= nil and player:CanUseSpell(_Q) == READY then
+	if ts.target ~= nil and and player:CanUseSpell(_Q) == READY and player:GetDistance(ts.target) < 900 then
 		for i = 1, heroManager.iCount do
 			local matchI = heroManager:GetHero(i)
 			if ts.target.name == matchI.name then
