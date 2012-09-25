@@ -83,7 +83,7 @@ for k = 1, objManager.maxObjects do
 if predic ~= nil and blocked == false and alwaysQ then
          CastSpell(_Q, predic.x, predic.z)
         end
-        if blocked == false and qAfterAA and justAA and GetTickCount() - AAtimer > waitTime then
+        if predic ~= nil and blocked == false and qAfterAA and justAA and GetTickCount() - AAtimer > waitTime then
          CastSpell(_Q, predic.x, predic.z)
          justAA = false
         end
