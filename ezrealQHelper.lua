@@ -1,7 +1,7 @@
 if GetMyHero().charName == "Ezreal" then
 PrintChat(" >> Ezreal Helper loaded!")
 --[[
-Ezreal Helper v1.2 by ikita for BoL Studio
+Ezreal Helper v1.2b by ikita for BoL Studio
 Auto Q after each auto-atk
 ]]
 
@@ -25,7 +25,8 @@ require "linear_prediction"
 local lp = LinearPrediction:new(900,1.2)
 local ts = TargetSelector(TARGET_LOW_HP,900)
 
-function OnProcessSpell(object, spellName)
+function OnProcessSpell(object, spell)
+local spellName = spell.name
 if player:CanUseSpell(_Q) == READY and object.name == player.name and ((spellName == "EzrealBasicAttack") or (spellName == "EzrealBasicAttack2") or (spellName == "EzrealCritAttack")) then
 		justAA = true
 		AAtimer = GetTickCount()
