@@ -1,5 +1,5 @@
 --[[
-	Ikita's Smart Jump v2.0   for BoL Studio
+	Ikita's Smart Jump v2.1   for BoL Studio
     Attempts to ward jump (Wriggles > Sight > Vision) before trying to flash.
 ]]
 
@@ -10,11 +10,13 @@ require "AllClass"
 
 
 --[[		Config		]]                           
+local HKF = 173 --Toggle on/off for includeFlash minus key "-"
 local HK = 192 --Hold hotkey to flash to location. default at " ~ " (the key left to number 1)
 local flashRange = 420 --Flash range is 400. Real range is larger if you flash inside a wall
 local wardRange = 550 --Ward range is 600. I set it smaller so the ward won't pop too far to the other side of the wall, rendering your jump out of reach.
 local jumpDelay = 100 -- a slight delay after warding before jumping
 
+local includeFlash = true --initial setting when going into a new game
 
 --Nothing
 local lastJump = 0
@@ -84,7 +86,7 @@ function OnTick()
 			end
 		end
 			
-		if (not (jumpSlot ~= nil and wardSlot ~= nil and player:CanUseSpell(jumpSlot) == READY) ) and flashSlot ~= nil then
+		if includeFlash and (not (jumpSlot ~= nil and wardSlot ~= nil and player:CanUseSpell(jumpSlot) == READY) ) and flashSlot ~= nil then
 			--for flash
 			local dx1 = flashRange*math.cos(rad1)
 			local dz1 = flashRange*math.sin(rad1)
@@ -109,6 +111,17 @@ function OnWndMsg(msg,key)
             scriptActive = true
         else
             scriptActive = false
+        end
+    end
+    if key == HKF then
+        if msg == KEY_DOWN then
+        	if includeFlash then
+        		includeFlash = false
+        		PrintChat("Not include flash")
+        	else
+        		includeFlash = true
+        		PrintChat("Include flash")
+        	end
         end
     end
 end
