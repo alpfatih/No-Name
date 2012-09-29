@@ -1,0 +1,89 @@
+--[[
+	Ikita's Auto Ward 1.0   for BoL Studio
+    Sight Wards
+]]
+
+require "AllClass"
+PrintChat("AutoWard enabled")
+
+--[[		Config		]]                           
+local HK = 117 --F6
+local wardRange = 600 --Ward range is 600.
+
+
+--Nothing
+local scriptActive = true
+local wardTimer = 0
+local wardSlot = nil
+local wardMatrix = {}
+local lastWard = 0
+wardMatrix[1] = {10000,11578,10012,8924,7916,11369,6185,4911,4025,2579,4031,2788}
+wardMatrix[2] = {2868,3452,4842,5461,4595,6885,9856,8878,9621,10943,11519,7611}
+wardMatrix[3] = {}
+for i = 1, 12 do
+	wardMatrix[3][i] = false
+end
+
+--[[ 		Code		]]
+
+function wardUpdate()
+	for k = 1, objManager.maxObjects do
+	local object = objManager:GetObject(k)
+		if object ~= nil and (string.find(object.name, "Ward") ~= nil or string.find(object.name, "Wriggle") ~= nil) then
+			for i = 1, 12 do
+				if math.sqrt((wardMatrix[1][i] - object.x)*(wardMatrix[1][i] - object.x) + (wardMatrix[2][i] - object.z)*(wardMatrix[2][i] - object.z)) < 1100 then
+					wardMatrix[3][i] = true
+				else
+					wardMatrix[3][i] = false
+				end
+			end
+		end
+	end
+	wardTimer = GetTickCount()
+end
+
+function OnTick()
+	if scriptActive then
+		if GetTickCount() - wardTimer > 800 then
+			wardUpdate()
+		end	
+		if GetInventorySlotItem(2044) ~= nil then
+			wardSlot = GetInventorySlotItem(2044)
+		elseif GetInventorySlotItem(2043) ~= nil then
+			wardSlot = GetInventorySlotItem(2043)
+		else
+			wardSlot = nil
+		end
+		
+		if wardSlot ~= nil and GetTickCount() - lastWard > 2000 then
+			for i = 1, 12 do
+				if math.sqrt((wardMatrix[1][i] - player.x)*(wardMatrix[1][i] - player.x) + (wardMatrix[2][i] - player.z)*(wardMatrix[2][i] - player.z)) < 600 and wardMatrix[3][i] == false then
+					CastSpell( wardSlot, wardMatrix[1][i], wardMatrix[2][i] )
+					lastWard = GetTickCount()
+				end
+			end
+		end
+	end	
+end
+
+
+
+function OnWndMsg(msg,key)
+    if key == HK then
+        if msg == KEY_DOWN then
+        	if scriptActive then
+        		scriptActive = false
+        		PrintChat("AutoWard disabled")
+ 	        else
+    	        scriptActive = true
+    	        PrintChat("AutoWard enabled")
+    	    end
+        end
+    end
+end
+
+
+
+
+	
+    
