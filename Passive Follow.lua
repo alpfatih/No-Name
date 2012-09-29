@@ -10,7 +10,7 @@
    
    Updated for BoL by ikita
 ]]
-
+require "AllClass"
 
 -- SETTINGS
 do
@@ -157,11 +157,8 @@ end
 
 -- is recall, return true/false
 function isRecall(hero)
-	if hero ~= nil and hero.valid then 
-		for i = 1, hero.buffCount, 1 do
-			local buff = hero:getBuff(i)
-			if buff == "Recall" or buff == "SummonerTeleport" or buff == "RecallImproved" then return true end
-		end
+	if hero ~= nil then 
+			if TargetHaveParticle("TeleportHomeImproved.troy",hero,100) or TargetHaveParticle("TeleportHome.troy",hero,100) then return true end
     end
 	return false
 end
