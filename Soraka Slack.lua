@@ -77,6 +77,8 @@ GoldRefreshTick = 0
 allySpawn = nil
 enemySpawn = nil
 
+recallStartTime = 0
+recallDetected = false
 ------------------------------- MATH SPELLS -------------------------------
 
 -- HEAL
@@ -242,11 +244,25 @@ end
 
 -- is recall, return true/false
 function isRecall(hero)
-	if hero ~= nil then 
-			if TargetHaveParticle("TeleportHomeImproved.troy",hero,100) or TargetHaveParticle("TeleportHome.troy",hero,100) then return true end
+	if GetTickCount() - recallStartTime > 8000 then
+		recallObj = nil
+	end
+	if hero ~= nil and recallObj ~= nil then 
+		if recallDetected and GetDistance(recallObj, hero) < 100 then 
+			return true 
+		end
     end
 	return false
 end
+
+function OnCreateObj(object)
+	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
+		recallDetected = true
+		recallStartTime = GetTickCount()
+		recallObj = object
+	end
+end
+
 
 -- CHECK IS HERO IGNITED
  function isIgnited(hero)

@@ -67,6 +67,8 @@ version = 1
 player = GetMyHero()
 end
 
+recallStartTime = 0
+recallDetected = false
 -- ABSTRACTION-METHODS
 
 --return players table
@@ -155,12 +157,30 @@ function hpOfChampsNear(hero,team,distance)
 	return percent
 end
 
+function OnProcessSpell(object,spellProc)
+	if object.name == player.name and (spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
+		player:HoldPosition()
+	end
+end
+
 -- is recall, return true/false
 function isRecall(hero)
-	if hero ~= nil then 
-			if TargetHaveParticle("TeleportHomeImproved.troy",hero,100) or TargetHaveParticle("TeleportHome.troy",hero,100) then return true end
+	if GetTickCount() - recallStartTime > 8000 then
+		recallObj = nil
+	end
+	if hero ~= nil and recallObj ~= nil then 
+		if recallDetected and GetDistance(recallObj, hero) < 100 then 
+			return true 
+		end
     end
 	return false
+end
+function OnCreateObj(object)
+	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
+		recallDetected = true
+		recallStartTime = GetTickCount()
+		recallObj = object
+	end
 end
 
 -- turn (off - on) by SetupTogleKey
@@ -206,6 +226,21 @@ end
 mytime = GetTickCount() 
 
 function OnTick()
+	--Identify AD carry
+	if carryCheck == false then
+		for i = 1, heroManager.iCount, 1 do
+		local teammates = heroManager:getHero(i) 
+		--Coordinates are for bots only
+			if math.sqrt((teammates.x - 12143)^2 + (teammates.z - 2190)^2) < 4500 then
+				following = teammates
+				PrintChat("Passive Follow >> following summoner: "..teammates.name)
+				state = FOLLOW
+				carryCheck = true
+			end
+		end
+		
+	end
+
 	if GetTickCount() - mytime > 800 and switcher then 
 		Brain()
 		mytime = GetTickCount() 
@@ -296,7 +331,7 @@ end
 	-- here checking timer
 function OnLoad()
 	PrintChat("Passive Follow >> v"..tostring(version).." LOADED")
-
+	carryCheck = false
 	-- numerate spawn
 	for i=1, objManager.maxObjects, 1 do
 		local candidate = objManager:getObject(i)
