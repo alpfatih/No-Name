@@ -7,6 +7,7 @@ if GetMyHero().charName == "Soraka" then
 	v7: script heal ignited too, but now it preffer unignated targets
 	
 	Updated for BoL by ikita v8.3
+	Credits to Barasia283 for everything on auto silence
 --]]
 
 ------------------------------- SETTINGS -------------------------------
@@ -82,6 +83,14 @@ enemySpawn = nil
 
 recallStartTime = 0
 recallDetected = false
+
+-- disable name list from Barasia283
+disableArray = {
+				"CaitlynAceintheHole", "Crowstorm", "Drain", "ReapTheWhirlwind", "FallenOne", "KatarinaR", "AlZaharNetherGrasp", 
+				"GalioIdolOfDurand", "Meditate", "MissFortuneBulletTime", "AbsoluteZero", "Pantheon_Heartseeker", "Pantheon_GrandSkyfall_Jump", 
+				"ShenStandUnited", "gate", "UrgotSwap2", "InfiniteDuress", "VarusQ"
+				}
+
 ------------------------------- MATH SPELLS -------------------------------
 
 -- HEAL
@@ -318,6 +327,19 @@ function AutoSilence(object) --Working on it
 	end]]
 end
 
+function OnProcessSpell(object,spellProc)
+	if player:GetSpellData(2).level > 0 and player:CanUseSpell(_E) == READY and SetupAutoSilence == true and Soraka_SWITCH == true and object.team ~= player.team then
+		for i = 1, #disableArray, 1 do
+			if GetDistance(object, player) < 725 then
+				if spellProc.name == disableArray[i] then
+					CastSpell(_E, object)
+				end
+			end
+		end
+	end
+end
+
+
 function AutoHeal()
 	if SetupDebug == true then PrintChat("debug >> AutoHeal()") end
 	--check is heal lvled and ready
@@ -444,7 +466,7 @@ end
 -- LOAD --
 function OnLoad()
 	player = GetMyHero()
-	PrintChat("SORAKA SLACK >> SORAKA SLACKER v8.1 loaded!")	
+	PrintChat("SORAKA SLACK >> SORAKA SLACKER v8.3 loaded!")	
 	-- numerate spawn
 	for i=1, objManager.maxObjects, 1 do
 		local candidate = objManager:getObject(i)
