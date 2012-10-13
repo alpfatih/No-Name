@@ -158,7 +158,7 @@ function hpOfChampsNear(hero,team,distance)
 end
 
 function OnProcessSpell(object,spellProc)
-	if object.name == player.name and (spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
+	if switcher == true and object.name == player.name and (spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
 		player:HoldPosition()
 	end
 end
