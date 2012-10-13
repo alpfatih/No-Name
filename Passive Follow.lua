@@ -22,7 +22,7 @@ SetupTogleKey = 117	 --Key to Togle script. [ F6 - 117 ] default
 					 --key codes
 					 --http://www.indigorose.com/webhelp/ams/Program_Reference/Misc/Virtual_Key_Codes.htm
 
-SetupFollowDistance = 600
+SetupFollowDistance = 500
 --Distance between FollowTarget and Champion in which champion starts correcting itself
 --Should be more then 400
 
@@ -158,8 +158,8 @@ function hpOfChampsNear(hero,team,distance)
 end
 
 function OnProcessSpell(object,spellProc)
-	if switcher == true and object.name == player.name and (spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
-		player:HoldPosition()
+	if switcher == true and object.name == player.name and (spellProc.name == "SonaSongofDiscordAttack" or spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
+		Run(GetCloseTower(player,player.team))
 	end
 end
 
@@ -210,6 +210,7 @@ function OnSendChat(text)
 					if (string.lower(players[i].name) == string.lower(name))  then 
 						following = players[i]
 						PrintChat("Passive Follow >> following summoner: "..players[i].name)
+						carryCheck = true
 						if following.dead then state = WAITING_FOLLOW_RESP else state = FOLLOW end
 					end
 				end
@@ -347,4 +348,5 @@ function OnLoad()
 	end
 	-- fix user settings
 	if SetupFollowDistance < 400 then SetupFollowDistance = 400 end
+	-- count towers
 end
