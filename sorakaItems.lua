@@ -14,6 +14,7 @@ buyDelay = 500
 
 lastBuy = 0
 nextbuyIndex = 1
+wardBought = 0
 firstBought = false
 --[[ 		Code		]]
 
@@ -29,8 +30,10 @@ function OnTick()
 		BuyItem(2003)
 		firstBought = true
 	end
-	if GetTickCount() - startingTime > 8000 and GetInventorySlotItem(2044) == nil then
+	if GetTickCount() - wardBought > 30000 and GetTickCount() - startingTime > 8000 and GetInventorySlotItem(2044) == nil then
 		BuyItem(2044)
+		BuyItem(2044)
+		wardBought = GetTickCount()
 	end
 	if GetTickCount() - startingTime > 5000 then
 		if GetTickCount() > lastBuy + buyDelay then
