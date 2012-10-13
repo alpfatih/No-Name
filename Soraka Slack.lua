@@ -6,7 +6,7 @@ if GetMyHero().charName == "Soraka" then
 	I Learned From Their Previous Scripts
 	v7: script heal ignited too, but now it preffer unignated targets
 	
-	Updated for BoL by ikita v8.1
+	Updated for BoL by ikita v8.3
 --]]
 
 ------------------------------- SETTINGS -------------------------------
@@ -24,6 +24,9 @@ SetupManaGiveRate= 3 -- At which rate you should give mana. 	Example: your usual
 
 SetupAutoSilence= true -- Auto Silence --in development
 SetupAntiKarthus= true -- Soraka AutoUlt KarthusUlt on low hp targets
+
+SetupAutoStarcall= true -- Auto Starcall
+SetupStarcallLimit = 200 -- Does not cast Starcall when mana falls below this level
 
 SetupDistance= 850 -- How much distance to use spells
 
@@ -334,6 +337,19 @@ function AutoHeal()
 	end
 end
 
+function AutoStarcall()
+	--check Q lvled and ready
+	if player:GetSpellData(0).level > 0 and player:CanUseSpell(_Q) == READY then
+		for i = 1, heroManager.iCount do
+			local target = heroManager:GetHero(i)
+			if target ~= nil and target.team ~= player.team and GetDistance(target, player) < 500 and player.mana > SetupStarcallLimit then
+				CastSpell(_Q)
+			end
+		end
+	end
+end
+	
+
 function AutoMana() --Champion check seems bugged ?
 	if SetupDebug == true then PrintChat("debug >> AutoMana()") end
 	--check is E lvled and ready
@@ -411,6 +427,7 @@ function OnTick() --Need 200ms interval
 	if player.dead == false and isRecall(player) == false then
 		if Soraka_SWITCH then
 			if SetupAutoUlt then AutoUlt() end
+			if SetupAutoStarcall then AutoStarcall() end
 			if SetupAutoHeal then AutoHeal() end
 			if SetupAutoMana then AutoMana() end
 		end
