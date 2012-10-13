@@ -52,6 +52,9 @@ end
 
 
 function OnLoad()
+	if GetInventorySlotIsEmpty(ITEM_1) == false then
+		firstBought = true
+	end
 	startingTime = GetTickCount()
 	PrintChat("Soraka Items Loaded")
 end

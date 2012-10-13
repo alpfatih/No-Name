@@ -165,23 +165,25 @@ end
 
 -- is recall, return true/false
 function isRecall(hero)
-	if GetTickCount() - recallStartTime > 8000 then
-		recallObj = nil
-	end
-	if hero ~= nil and recallObj ~= nil then 
-		if recallDetected and GetDistance(recallObj, hero) < 100 then 
-			return true 
-		end
-    end
-	return false
+return false
 end
-function OnCreateObj(object)
-	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
-		recallDetected = true
-		recallStartTime = GetTickCount()
-		recallObj = object
-	end
-end
+--	if GetTickCount() - recallStartTime > 8000 then
+--		recallObj = nil
+--	end
+--	if hero ~= nil and recallObj ~= nil then 
+--		if recallDetected and GetDistance(recallObj, hero) < 100 then 
+--			return true 
+--		end
+--    end
+--	return false
+--end
+--function OnCreateObj(object)
+--	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
+--		recallDetected = true
+--		recallStartTime = GetTickCount()
+--		recallObj = object
+--	end
+--end
 
 -- turn (off - on) by SetupTogleKey
 function OnWndMsg(msg, keycode)
@@ -226,12 +228,12 @@ end
 mytime = GetTickCount() 
 
 function OnTick()
-	--Identify AD carry
+	--Identify AD carry and follow
 	if carryCheck == false then
 		for i = 1, heroManager.iCount, 1 do
 		local teammates = heroManager:getHero(i) 
 		--Coordinates are for bots only
-			if math.sqrt((teammates.x - 12143)^2 + (teammates.z - 2190)^2) < 4500 then
+			if math.sqrt((teammates.x - 12143)^2 + (teammates.z - 2190)^2) < 4500 and teammates.team == player.team and teammates.name ~= player.name then
 				following = teammates
 				PrintChat("Passive Follow >> following summoner: "..teammates.name)
 				state = FOLLOW

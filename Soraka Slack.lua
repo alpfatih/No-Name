@@ -248,6 +248,7 @@ return false
 end
 --	if GetTickCount() - recallStartTime > 8000 then
 --		recallObj = nil
+--		recallDetected = false
 --	end
 --	if hero ~= nil and recallObj ~= nil then 
 --		if recallDetected and GetDistance(recallObj, hero) < 100 then 
