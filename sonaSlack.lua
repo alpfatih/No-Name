@@ -246,7 +246,7 @@ function AutoUlt()
 		if CountEnemyHeroInRange(900) > SetupUltEffect - 1 then
 			for i = 1, heroManager.iCount, 1 do
 			local hero = heroManager:getHero(i)
-				if GetDistance(hero) < 900 then
+				if hero.team ~= player.team and GetDistance(hero) < 900 then
 					CastSpell(_R, hero.x, hero.z)
 				end
 			end
