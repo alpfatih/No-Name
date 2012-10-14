@@ -42,6 +42,7 @@ SetupDrawInfo = true -- Drawing usefull info on screen
 SetupDrawX = 0.8 
 SetupDrawY = 0.2 -- Position of info, minimum = 0, maximum = 1, SetupDrawX - width, SetupDrawY - height
 
+recentrecallTarget = player
 
 
 
@@ -257,22 +258,24 @@ end
 -- is recall, return true/false
 function isRecall(hero)
 	if GetTickCount() - recallStartTime > 8000 then
-		recallObj = nil
-		recallDetected = false
-	end
-	if hero ~= nil and recallObj ~= nil then 
-		if recallDetected and GetDistance(recallObj, hero) < 100 then 
-			return true 
+		return false
+	else
+		if recentrecallTarget.name == hero.name then
+			return true
 		end
-    end
-	return false
+		return false
+	end
 end
 
 function OnCreateObj(object)
 	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
-		recallDetected = true
+		for i = 1, heroManager.iCount do
+			local target = heroManager:GetHero(i)
+			if GetDistance(target, object) < 100 then
+				recentrecallTarget = target
+			end
+		end
 		recallStartTime = GetTickCount()
-		recallObj = object
 	end
 end
 

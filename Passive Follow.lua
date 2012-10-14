@@ -69,6 +69,9 @@ end
 
 recallStartTime = 0
 recallDetected = false
+
+recentrecallTarget = player
+
 -- ABSTRACTION-METHODS
 
 --return players table
@@ -165,25 +168,27 @@ end
 
 -- is recall, return true/false
 function isRecall(hero)
-return false
+	if GetTickCount() - recallStartTime > 8000 then
+		return false
+	else
+		if recentrecallTarget.name == hero.name then
+			return true
+		end
+		return false
+	end
 end
---	if GetTickCount() - recallStartTime > 8000 then
---		recallObj = nil
---	end
---	if hero ~= nil and recallObj ~= nil then 
---		if recallDetected and GetDistance(recallObj, hero) < 100 then 
---			return true 
---		end
---    end
---	return false
---end
---function OnCreateObj(object)
---	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
---		recallDetected = true
---		recallStartTime = GetTickCount()
---		recallObj = object
---	end
---end
+
+function OnCreateObj(object)
+	if object.name == "TeleportHomeImproved.troy" or object.name == "TeleportHome.troy" then
+		for i = 1, heroManager.iCount do
+			local target = heroManager:GetHero(i)
+			if GetDistance(target, object) < 100 then
+				recentrecallTarget = target
+			end
+		end
+		recallStartTime = GetTickCount()
+	end
+end
 
 -- turn (off - on) by SetupTogleKey
 function OnWndMsg(msg, keycode)
