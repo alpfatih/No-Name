@@ -1,6 +1,6 @@
-if GetMyHero().charName == "Sona" then
+if GetMyHero().charName == "Sona" or GetMyHero().charName == "Soraka" then
 --[[
-	ikita's item list for Soraka
+	ikita's item list for Soraka/Sona
 ]]
 
 
@@ -8,7 +8,15 @@ require "AllClass"
 
 
 --[[		Config		]]                      
+if GetMyHero().charName == "Sona" then
+PrintChat("Support Items Loaded: Sona")
 shopList = {2044, 2044, 2044, 1004, 2004, 2004, 1007, 3096, 1001, 1028, 3132, 1033, 3028, 3158, 1028, 3067, 3069, 1028, 1029, 3105, 1029, 3097, 3190, 1028, 3010, 3102}
+end
+if GetMyHero().charName == "Soraka" then
+PrintChat("Support Items Loaded: Soraka")
+shopList = {2044, 2044, 2044, 1004, 2004, 2004, 1007, 3096, 1001, 1028, 3132, 3158, 1028, 3067, 3069, 1028, 1029, 3105, 1029, 3097, 3190, 1028, 3010, 3102}
+end
+
 buyDelay = 500
 
 
@@ -59,6 +67,5 @@ function OnLoad()
 		firstBought = true
 	end
 	startingTime = GetTickCount()
-	PrintChat("Sona Items Loaded")
 end
 end
