@@ -73,7 +73,7 @@ function OnTick()
 			if player:CanUseSpell(10+i) == READY then
 				for k = 1, player.buffCount, 1 do
 					for j = 1, #cleanseList, 1 do
-						if player:getBuff(k) == cleanseList[i] then
+						if player:getBuff(k) == cleanseList[j] then
 							CastSpell(10+i)
 						end
 					end
@@ -88,7 +88,7 @@ function OnTick()
 					if target ~= nil and target.visible == true and target.team ~= player.team and target.dead == false and player:GetDistance(target) < 550 then
 						if target.health/target.maxHealth < exhaustLimit then
 							for k = 1, heroManager.iCount do
-								local target2 = heroManager:GetHero(j)
+								local target2 = heroManager:GetHero(k)
 								if target2 ~= nil and target2.visible == true and target2.team == player.team and target2.dead == false and player:GetDistance(target2) < 550 then
 									CastSpell(10+i, target)
 								end
@@ -107,7 +107,7 @@ function OnTick()
 						if target.health/target.maxHealth > player.health*1.66/player.maxHealth then
 							ghostFlag = false
 							for k = 1, heroManager.iCount do
-								local target2 = heroManager:GetHero(j)
+								local target2 = heroManager:GetHero(k)
 								if target2 ~= nil and target2.visible == true and target2.team == player.team and target2.dead == false and player:GetDistance(target2) < 600 then
 								else
 									ghostFlag = true
