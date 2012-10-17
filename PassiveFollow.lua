@@ -160,8 +160,8 @@ function hpOfChampsNear(hero,team,distance)
 	return percent
 end
 
-function OnProcessSpell(object,spellProc)
-	if switcher == true and object.name == player.name and (spellProc.name == "SonaSongofDiscordAttack" or spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
+function OnProcessSpell(object,spellProc) --for soraka + sona
+	if switcher == true and object.name == player.name and (spellProc.name == "SonaHymnofValorAttack" or spellProc.name == "SonaAriaofPerseveranceAttack" or spellProc.name == "SonaBasicAttack" or spellProc.name == "SonaBasicAttack2" or spellProc.name == "SonaSongofDiscordAttack" or spellProc.name == "SorakaBasicAttack" or spellProc.name == "SorakaBasicAttack2") then
 		Run(GetCloseTower(player,player.team))
 	end
 end
