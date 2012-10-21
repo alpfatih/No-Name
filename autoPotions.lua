@@ -14,7 +14,7 @@
     --[[   Code   ]]
     function OnTick()
     	local player = GetMyHero()
-        local manaPercent = player.mana/(player.maxMana - player.mana)
+        local manaPercent = player.mana/player.maxMana
         local ItemSlot = {ITEM_1,ITEM_2,ITEM_3,ITEM_4,ITEM_5,ITEM_6,}
             for i=1, 6, 1 do
                 if player:getInventorySlot(ItemSlot[i]) == 2004 and manaLimit >= manaPercent and MPotUsed == false then
@@ -29,7 +29,7 @@
             end
             
             
-        local hpPercent = player.health/(player.maxHealth - player.health)
+        local hpPercent = player.health/player.maxHealth
             for i=1, 6, 1 do
                 if player:getInventorySlot(ItemSlot[i]) == 2003 and hpLimit >= hpPercent and HPotUsed == false then
                 	FinalItemslotH = ItemSlot[i]
