@@ -1,7 +1,7 @@
 if GetMyHero().charName == "Ezreal" then
 PrintChat(" >> Ezreal Helper loaded!")
 --[[
-Ezreal Helper v1.2b by ikita for BoL Studio
+Ezreal Helper v1.3 by ikita for BoL Studio
 Auto Q after each auto-atk
 ]]
 
@@ -15,15 +15,14 @@ local blocked = false
 local justAA = false
 local AAtimer = 0
 local waitTime = 100 --if you have good ping, set it to a value higher than 100 ms. if you have bad ping then change this to zero.
+local travelDuration = 600
 --[[ Code ]]
 
 
-require "TargetSelectorClass"
-require "vector"
-require "linear_prediction"
 
-local lp = LinearPrediction:new(900,1.2)
-local ts = TargetSelector(TARGET_LOW_HP,900)
+require "AllClass"
+
+local ts = TargetSelector(TARGET_LOW_HP,900,DAMAGE_PHYSICAL)
 
 function OnProcessSpell(object, spell)
 local spellName = spell.name
@@ -34,13 +33,18 @@ if player:CanUseSpell(_Q) == READY and object.name == player.name and ((spellNam
 end
 
 function OnTick()
-	ts:updateTarget()
-    lp:tick()
+	ts:update()
+	if ts.target ~= nil then
+		travelDuration = (GetDistance(ts.target, player)/1.2)
+	end
+	ts:SetPrediction(travelDuration)
+	Prediction__OnTick()
     if GetTickCount() - AAtimer > 600 then
     	justAA = false
     end
 if ts.target ~= nil and player:CanUseSpell(_Q) == READY then
-local predic = lp:getPredictionFor(ts.target.name)
+local predic = ts.nextPosition
+
 blocked = false
 
 for k = 1, objManager.maxObjects do
