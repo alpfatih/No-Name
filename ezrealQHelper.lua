@@ -6,10 +6,12 @@ Auto Q after each auto-atk
 ]]
 
 --SETTINGS
+hotkeyAA = "G"
+hotkeyAlways = "T"
 local qAfterAA = true
-local qAfterAAKey = 71 -- G
+local qAfterAAKey = string.byte(hotkeyAA) -- G
 local alwaysQ = false
-local alwaysQKey = 84 -- T
+local alwaysQKey = string.byte(hotkeyAlways) -- T
 local qWidth = 150 -- can change
 local blocked = false
 local justAA = false
