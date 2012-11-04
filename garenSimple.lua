@@ -9,7 +9,7 @@ if GetMyHero().charName == "Garen" then
 local player = GetMyHero()
 --[[            Code            ]]
      
-local function OnTick() 
+function OnTick() 
         local players = heroManager.iCount
         for i = 1, players, 1 do
             local target = heroManager:getHero(i)
