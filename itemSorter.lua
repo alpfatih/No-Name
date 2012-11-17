@@ -12,6 +12,7 @@ keypress = {81,87,69,82,68,70,49,50,51,52,53,54}
 
 function OnLoad()
 scriptActive = false
+toggleActive = false
 PrintChat(" >> ikita's Item sorter loaded")
 end
 
@@ -30,7 +31,7 @@ end
 --[[ Code ]] --
 
 function OnTick()
-if scriptActive then
+if scriptActive and toggleActive then
 for i = 0, 6, 1 do
 swap(i,i+1)
 end
@@ -42,11 +43,13 @@ end
 function OnWndMsg( msg, keycode )
 	if msg == KEY_DOWN then 
 		if keycode == HK then
-			if scriptActive then
-				scriptActive = false
+			if toggleActive then
+				toggleActive = false
+				scriptActive = false
 				PrintChat(" >> Item sort disabled!")  
 			else
-				scriptActive = true
+				toggleActive = true
+				scriptActive = true
 				PrintChat(" >> Item sort enabled!")
 			end     
 		end
