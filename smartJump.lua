@@ -1,22 +1,23 @@
 --[[
-	Ikita's Smart Jump v2.1   for BoL Studio
-    Attempts to ward jump (Wriggles > Sight > Vision) before trying to flash.
+	Ikita's Smart Jump v2.2   for BoL Studio
+    Attempts to ward jump (Wriggles > Stones > Sight > Vision) before trying to flash.
 ]]
 
 --Note: if script is not responsive, move cursor into the wall (towards your champion)
 --Or play with the configs
 
-require "AllClass"
 
 
 --[[		Config		]]                           
-local HKF = 173 --Toggle on/off for includeFlash minus key "-"
-local HK = 192 --Hold hotkey to flash to location. default at " ~ " (the key left to number 1)
+flashToggle = "0"
+jumpKey = "G"
+local HKF = string.byte(flashToggle) --Toggle on/off for includeFlash minus key "0"
+local HK = string.byte(jumpKey) --Hold hotkey to flash to location. default at " G " (the key left to number 1)
 local flashRange = 420 --Flash range is 400. Real range is larger if you flash inside a wall
 local wardRange = 550 --Ward range is 600. I set it smaller so the ward won't pop too far to the other side of the wall, rendering your jump out of reach.
 local jumpDelay = 100 -- a slight delay after warding before jumping
 
-local includeFlash = true --initial setting when going into a new game
+local includeFlash = false --initial setting when going into a new game
 
 --Nothing
 local lastJump = 0
@@ -49,10 +50,76 @@ function OnTick()
 		local dz = z - player.z
 		local rad1 = math.atan2(dz, dx)
 		
-		--Crap code here needs cleaning up
+		--Crap code here needs cleaning up. omg this is getting out of hand. I should make an array of items and loop them one by one.
 		if GetInventorySlotItem(3154) ~= nil then
 			wardSlot = GetInventorySlotItem(3154)
 			
+			if player:CanUseSpell(wardSlot) ~= READY then
+				if GetInventorySlotItem(2049) ~= nil then
+					wardSlot = GetInventorySlotItem(2049)
+					if player:CanUseSpell(wardSlot) ~= READY then
+						if GetInventorySlotItem(2045) ~= nil then
+							wardSlot = GetInventorySlotItem(2045)
+							if player:CanUseSpell(wardSlot) ~= READY then
+								if GetInventorySlotItem(2044) ~= nil then
+									wardSlot = GetInventorySlotItem(2044)
+								elseif GetInventorySlotItem(2043) ~= nil then
+									wardSlot = GetInventorySlotItem(2043)
+								else
+									wardSlot = nil
+								end
+							end
+						elseif GetInventorySlotItem(2044) ~= nil then
+							wardSlot = GetInventorySlotItem(2044)
+						elseif GetInventorySlotItem(2043) ~= nil then
+							wardSlot = GetInventorySlotItem(2043)
+						else
+							wardSlot = nil
+						end
+					end
+				elseif GetInventorySlotItem(2045) ~= nil then
+					wardSlot = GetInventorySlotItem(2045)
+					if player:CanUseSpell(wardSlot) ~= READY then
+						if GetInventorySlotItem(2044) ~= nil then
+							wardSlot = GetInventorySlotItem(2044)
+						elseif GetInventorySlotItem(2043) ~= nil then
+							wardSlot = GetInventorySlotItem(2043)
+						else
+							wardSlot = nil
+						end
+					end
+				elseif GetInventorySlotItem(2044) ~= nil then
+					wardSlot = GetInventorySlotItem(2044)
+				elseif GetInventorySlotItem(2043) ~= nil then
+					wardSlot = GetInventorySlotItem(2043)
+				else
+					wardSlot = nil
+				end
+			end
+		elseif GetInventorySlotItem(2049) ~= nil then
+			wardSlot = GetInventorySlotItem(2049)
+			if player:CanUseSpell(wardSlot) ~= READY then
+				if GetInventorySlotItem(2045) ~= nil then
+					wardSlot = GetInventorySlotItem(2045)
+					if player:CanUseSpell(wardSlot) ~= READY then
+						if GetInventorySlotItem(2044) ~= nil then
+							wardSlot = GetInventorySlotItem(2044)
+						elseif GetInventorySlotItem(2043) ~= nil then
+							wardSlot = GetInventorySlotItem(2043)
+						else
+							wardSlot = nil
+						end
+					end
+				elseif GetInventorySlotItem(2044) ~= nil then
+					wardSlot = GetInventorySlotItem(2044)
+				elseif GetInventorySlotItem(2043) ~= nil then
+					wardSlot = GetInventorySlotItem(2043)
+				else
+					wardSlot = nil
+				end
+			end
+		elseif GetInventorySlotItem(2045) ~= nil then
+			wardSlot = GetInventorySlotItem(2045)
 			if player:CanUseSpell(wardSlot) ~= READY then
 				if GetInventorySlotItem(2044) ~= nil then
 					wardSlot = GetInventorySlotItem(2044)
