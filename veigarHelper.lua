@@ -1,7 +1,7 @@
 if player.charName == "Veigar" then
 
 --[[
-                    Veigar Helper v1.8d by ikita
+                    Veigar Helper v1.9a by ikita
                     Based on Veiger Helper v0.7 by NewHotness
                     Inspired by llama's fpb veigar script and this script uses his stun calculations. Many thanks !
                     
@@ -281,9 +281,9 @@ function OnLoad()
                                     end
                                     CastSpell(_R, hero)
                                     CastSpell(_Q, hero)
-                                    VeigarConfig.scriptActive = false
-                            end     scriptActive = false
-                           
+                    
+                                 scriptActive = false
+                           end
                             if target ~= nil and target.visible and target.team ~= player.team and player:GetDistance(target) < 650 and not target.dead then
                                     if steal then
                                             if qDmg > target.health and player:CanUseSpell(_Q) == READY then
