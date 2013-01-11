@@ -57,17 +57,36 @@ if player.charName == "Veigar" then
             local circleThickness = 20                                --Set Circle thickness for Killable Enemies.
            
         --FUNCTIONS
-            function altDoFile(name)
-                dofile(debug.getinfo(1).source:sub(debug.getinfo(1).source:find(".*\\")):sub(2)..name)end
-                altDoFile("libs/TimingLib.lua")
-                altDoFile("libs/mec.lua")
-                altDoFile("libs/circle.lua")
-                altDoFile("libs/vector.lua")  
+                require "TimingLib"
+                require "mec"
+                require "circle"
+
                
                 local targetNum = 0
                 local timer = Timer:new()
-               
+
+				myObjectsTable = {}
+
+function objectIsValid(object)
+   return object and object.valid and object.name:find("Minion_") and object.team ~= myHero.team and object.dead == false 
+end
+function OnLoad()
+   for i = 0, objManager.maxObjects, 1 do
+          local object = objManager:GetObject(i)
+          if objectIsValid(object) then table.insert(myObjectsTable, object) end
+   end
+ end
+
             function OnTick()
+                    	local myQ = math.floor(45*(player:GetSpellData(_Q).level-1)+80+ (.6*player.ap))
+                	    for i,object in ipairs(myObjectsTable) do
+					          if objectIsValid(object) then
+					          		if qMinionsActive and myHero:GetDistance(object) <= 650 and object.health <= myHero:CalcMagicDamage(object, myQ) then	
+										CastSpell(_Q, object)
+									end
+					          else table.remove(myObjectsTable, i) i = i - 1 end
+					   end
+					
 
                                 timer:tickHandler()
                     
@@ -79,23 +98,26 @@ if player.charName == "Veigar" then
                             local qDmg = player:CalcMagicDamage(target, 45*(player:GetSpellData(_Q).level-1)+80+ (.6*player.ap))
                             local wDmg = player:CalcMagicDamage(target, 50*(player:GetSpellData(_W).level-1)+120+ (1*player.ap))
                             local rDmg = player:CalcMagicDamage(target, 125*(player:GetSpellData(_R).level-1)+250+ (1.2*player.ap) + (.8 * target.ap))
+                            local dfgQ = 0.2*qDmg
+                            local dfgW = 0.2*wDmg
+                            local dfgR = 0.2*rDmg
                             local dfgDmg = 0
                            
                             if player:GetSpellData(_Q).level == 0 then
                                     qDmg = 0
+                                    dfgQ = 0
                             end
                             if player:GetSpellData(_W).level == 0 then
                                     wDmg = 0
+                                    dfgW = 0
                             end
                             if player:GetSpellData(_R).level == 0 then
                                     rDmg = 0
+                                    dfgR = 0
                             end
                            
                             if invSlot ~= nil then
-                                    dfgDmg = player:CalcMagicDamage(target,(.25+(.04*(math.floor(player.ap/100))))*target.health)
-                            end
-                            if dfgDmg < 200 then
-                                    dfgDmg = 200
+                                    dfgDmg = player:CalcMagicDamage(target, 0.15*target.maxHealth)
                             end
                             if invSlot == nil then
                                     dfgDmg = 0
@@ -112,7 +134,7 @@ if player.charName == "Veigar" then
                                                     elseif true then
                                                             killableRdy[i] = false
                                                     end
-                                            elseif dfgDmg > target.health then
+                                            elseif invSlot ~= nil and dfgDmg > target.health then
                                                     PrintFloatText(target,0,"DFG")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
@@ -130,7 +152,7 @@ if player.charName == "Veigar" then
                                                     elseif true then
                                                             killableRdy[i] = false
                                                     end
-                                            elseif qDmg + dfgDmg > target.health then
+                                            elseif invSlot ~= nil and qDmg + dfgDmg + dfgQ > target.health then
                                                     PrintFloatText(target,0,"Q+DFG")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
@@ -148,7 +170,7 @@ if player.charName == "Veigar" then
                                                     elseif true then
                                                             killableRdy[i] = false
                                                     end
-                                            elseif dfgDmg + rDmg > target.health then
+                                            elseif invSlot ~= nil and dfgDmg + rDmg + dfgR > target.health then
                                                     PrintFloatText(target,0,"DFG+R")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
@@ -157,11 +179,11 @@ if player.charName == "Veigar" then
                                                     elseif true then
                                                             killableRdy[i] = false
                                                     end
-                                            elseif qDmg + dfgDmg + rDmg > target.health then
+                                            elseif invSlot ~= nil and qDmg + dfgDmg + rDmg + dfgQ + dfgR > target.health then
                                                     PrintFloatText(target,0,"Q+DFG+R")
                                                     killable[i] = true
                                                     killableRdyW[i] = false
-                                                    if player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
+                                                    if invSlot ~= nil and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
                                                             killableRdy[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
@@ -176,7 +198,7 @@ if player.charName == "Veigar" then
                                                             killableRdy[i] = false
                                                             killableRdyW[i] = false
                                                     end
-                                            elseif dfgDmg > target.health then
+                                            elseif invSlot ~= nil and dfgDmg + dfgW + wDmg > target.health then
                                                     PrintFloatText(target,0,"DFG+W")
                                                     killable[i] = true
                                                     if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_W) == READY then
@@ -196,7 +218,7 @@ if player.charName == "Veigar" then
                                                             killableRdy[i] = false
                                                             killableRdyW[i] = false
                                                     end
-                                            elseif qDmg + dfgDmg + wDmg > target.health then
+                                            elseif invSlot ~= nil and qDmg + dfgDmg + wDmg + dfgQ + dfgW> target.health then
                                                     PrintFloatText(target,0,"Q+DFG+W")
                                                     killable[i] = true
                                                     if player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_W) == READY then
@@ -216,20 +238,20 @@ if player.charName == "Veigar" then
                                                             killableRdy[i] = false
                                                             killableRdyW[i] = false
                                                     end
-                                            elseif dfgDmg + rDmg + wDmg > target.health then
+                                            elseif invSlot ~= nil and dfgDmg + rDmg + wDmg + dfgR + dfgW > target.health then
                                                     PrintFloatText(target,0,"DFG+R+W")
                                                     killable[i] = true
-                                                    if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY then
+                                                    if invSlot ~= nil and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
                                                             killableRdy[i] = false
                                                             killableRdyW[i] = false
                                                     end
-                                            elseif qDmg + dfgDmg + rDmg + wDmg > target.health then
+                                            elseif invSlot ~= nil and qDmg + dfgDmg + rDmg + wDmg + dfgQ + dfgW + dfgR > target.health then
                                                     PrintFloatText(target,0,"Q+DFG+R+W")
                                                     killable[i] = true
-                                                    if player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY and player:CanUseSpell(_Q) == READY then
+                                                    if invSlot~=nil and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY and player:CanUseSpell(_W) == READY and player:CanUseSpell(_Q) == READY then
                                                             killableRdy[i] = true
                                                             killableRdyW[i] = true
                                                     elseif true then
@@ -237,7 +259,7 @@ if player.charName == "Veigar" then
                                                             killableRdyW[i] = false
                                                     end
                                             elseif true then
-                                                            PrintFloatText(target,0,"" .. math.ceil(target.health - (qDmg + dfgDmg + rDmg + wDmg)) .. " hp")
+                                                            PrintFloatText(target,0,"" .. math.ceil(target.health - (qDmg + dfgDmg + rDmg + wDmg + dfgQ + dfgW + dfgR)) .. " hp")
                                                     killable[i] = false
                                                     killableRdy[i] = false
                                                     killableRdyW[i] = false
@@ -250,7 +272,7 @@ if player.charName == "Veigar" then
                             z = mousePos.z
                            
                             if target ~= nil and target.team ~= player.team and scriptActive == true then
-                                    if nukeIncluesWToggle then
+                                    if nukeIncluesWToggle then                  
                                         CastSpell(_W, x, z)
                                     end
                                     hero = findHeroNearestMouse()
@@ -259,8 +281,8 @@ if player.charName == "Veigar" then
                                     end
                                     CastSpell(_R, hero)
                                     CastSpell(_Q, hero)
-                                    scriptActive = false
-                            end
+                                    VeigarConfig.scriptActive = false
+                            end     scriptActive = false
                            
                             if target ~= nil and target.visible and target.team ~= player.team and player:GetDistance(target) < 650 and not target.dead then
                                     if steal then
@@ -270,16 +292,16 @@ if player.charName == "Veigar" then
                                                     CastSpell(invSlot, target)
                                             elseif rDmg > target.health and player:CanUseSpell(_R) == READY then
                                                     CastSpell(_R, target)
-                                            elseif invSlot ~= nil and qDmg + dfgDmg > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY then
+                                            elseif invSlot ~= nil and qDmg + dfgDmg + dfgQ > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY then
                                                     CastSpell(invSlot, target)
                                                     CastSpell(_Q, target)
                                             elseif qDmg + rDmg > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(_R) == READY then
                                                     CastSpell(_Q, target)
                                                     CastSpell(_R, target)
-                                            elseif invSlot ~= nil and dfgDmg + rDmg > target.health and player:CanUseSpell(_R) == READY and player:CanUseSpell(invSlot) == READY then
+                                            elseif invSlot ~= nil and dfgDmg + rDmg + dfgR > target.health and player:CanUseSpell(_R) == READY and player:CanUseSpell(invSlot) == READY then
                                                     CastSpell(invSlot, target)
                                                     CastSpell(_R, target)
-                                            elseif  invSlot ~= nil and qDmg + dfgDmg + rDmg > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
+                                            elseif  invSlot ~= nil and qDmg + dfgDmg + rDmg + dfgQ + dfgR > target.health and player:CanUseSpell(_Q) == READY and player:CanUseSpell(invSlot) == READY and player:CanUseSpell(_R) == READY then
                                                     CastSpell(invSlot, target)
                                                     CastSpell(_Q, target)
                                                     CastSpell(_R, target)
@@ -314,17 +336,7 @@ if player.charName == "Veigar" then
                     end
                    
             
-             
-                    if qMinionsActive then
-                            for k = 1, objManager.maxObjects do
-                                    local minionObject = objManager:GetObject(k)
-                                    if minionObject ~= nil and minionObject.team ~= player.team and minionObject.dead == false then
-                                            if  player:GetDistance(minionObject) < 650 and minionObject.health <= player:CalcMagicDamage(minionObject, 45*(player:GetSpellData(_Q).level-1)+80+ (.6*player.ap)) then
-                                                    CastSpell(_Q, minionObject)
-                                            end
-                                    end
-                            end
-                    end
+            
                    
                    
                    
@@ -347,7 +359,7 @@ if player.charName == "Veigar" then
             end
            
                           function OnCreateObj(object121)
-
+						   if objectIsValid(object121) then table.insert(myObjectsTable, object121) end		
 
                 for i = 1, heroManager.iCount do
                 local target2 = heroManager:GetHero(i)
@@ -470,6 +482,7 @@ if player.charName == "Veigar" then
              
              
             function OnWndMsg(msg,key)
+                --Minionkey           
                 if msg == KEY_DOWN then
                     --key down
                     if key == HK then
@@ -481,7 +494,6 @@ if player.charName == "Veigar" then
                         scriptActive = false
                     end
                 end
-                --Minionkey
                 if msg == KEY_DOWN then 
                 	if key == qMinionKey then
                 		if qMinionsActive then
