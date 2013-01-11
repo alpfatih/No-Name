@@ -1,7 +1,7 @@
 if GetMyHero().charName == "Ezreal" then
 PrintChat(" >> Ezreal Helper loaded!")
 --[[
-Ezreal Helper v1.3 by ikita for BoL Studio
+Ezreal Helper v1.4 by ikita for BoL Studio
 Auto Q after each auto-atk
 ]]
 
@@ -18,19 +18,29 @@ local justAA = false
 local AAtimer = 0
 local waitTime = 100 --if you have good ping, set it to a value higher than 100 ms. if you have bad ping then change this to zero.
 local travelDuration = 600
+myObjectsTable = {}
 --[[ Code ]]
 
-
-
-require "AllClass"
-
 local ts = TargetSelector(TARGET_LOW_HP,900,DAMAGE_PHYSICAL)
-
+function OnCreateObj(object121)
+if objectIsValid(object121) then table.insert(myObjectsTable, object121) end
+end
 function OnProcessSpell(object, spell)
 local spellName = spell.name
 if player:CanUseSpell(_Q) == READY and object.name == player.name and ((spellName == "EzrealBasicAttack") or (spellName == "EzrealBasicAttack2") or (spellName == "EzrealCritAttack")) then
 		justAA = true
 		AAtimer = GetTickCount()
+	end
+end
+
+function objectIsValid(object)
+   return object and object.valid and object.name:find("Minion_") and object.team ~= myHero.team and object.dead == false 
+end
+
+function OnLoad()
+	for i = 0, objManager.maxObjects, 1 do
+		local object = objManager:GetObject(i)
+		if objectIsValid(object) then table.insert(myObjectsTable, object) end
 	end
 end
 
@@ -49,9 +59,11 @@ local predic = ts.nextPosition
 
 blocked = false
 
-for k = 1, objManager.maxObjects do
-         local minionObjectE = objManager:GetObject(k)
-         if minionObjectE ~= nil and string.find(minionObjectE.name,"Minion_") == 1 and minionObjectE.team ~= player.team and minionObjectE.dead == false then
+for i,object in ipairs(myObjectsTable) do
+    if objectIsValid(object) then
+    
+
+         
 -- --Calculate minion block
 -- if player:GetDistance(minionObjectE) + math.sqrt((predic.x - minionObjectE.x)*(predic.x - minionObjectE.x) + (predic.z - minionObjectE.z)*(predic.z - minionObjectE.z))
 -- < math.sqrt((predic.x - player.x)*(predic.x - player.x) + (predic.z - player.z)*(predic.z - player.z)) + 350 then
@@ -59,7 +71,7 @@ for k = 1, objManager.maxObjects do
 -- PrintChat("blocked")
 -- end
          --Calculate minion block
-         if predic ~= nil and player:GetDistance(minionObjectE) < 900 then
+         if predic ~= nil and player:GetDistance(object) < 900 then
          --Player coordinates
          ex = player.x
          ez = player.z
@@ -75,8 +87,8 @@ for k = 1, objManager.maxObjects do
          c = ez - m*ex
          end
          --Minion coordinates:
-         mx = minionObjectE.x
-         mz = minionObjectE.z
+         mx = object.x
+         mz = object.z
         
          --Distance from point to line
          distanc = (math.abs(mz - m*mx - c))/(math.sqrt(m*m+1))
@@ -86,6 +98,7 @@ for k = 1, objManager.maxObjects do
              end
          end
      end
+     
 if predic ~= nil and blocked == false and alwaysQ then
          CastSpell(_Q, predic.x, predic.z)
         end
