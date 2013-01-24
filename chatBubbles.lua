@@ -1,25 +1,50 @@
-PrintChat(" >> Chat Bubbles loaded!")
-
---[[
-	Chat Bubbles v1.0 by ikita for BoL Studio
+                                                                     
+                                                                     
+                                                                     
+                                             
+PrintChat(" >> Chat Bubbles loaded!")
+
+
+
+--[[
+
+	Chat Bubbles v1.1 by ikita for BoL Studio
 	Credits to delusionallogic, and grey
 	I learned from dermalib and AllClass
-]]
-
-
+]]
+
+
+
+
+
 --[[		Code		]]
 bubbles = {}
-bubblesTimer = {}
-
-function OnTick()
+bubblesTimer = {0,0,0,0,0,0,0,0,0,0,0}
+staticString = {"","","","","","","","","","","","","","",""}
+dummyj = {}
+animationUpdate = {0,0,0,0,0,0,0,0,0,0,0}
+
+function OnTick()
+	for i=1, heroManager.iCount do
+		if GetTickCount() - bubblesTimer[i] > 9000 then 
+			dummyj[i] = 1
+		end
+		if GetTickCount() - animationUpdate[i] > 40 and dummyj[i] <= string.len(staticString[i]) then
+			bubbles[i] = string.sub(staticString[i], 1, dummyj[i])
+			dummyj[i] = dummyj[i] + 1
+			animationUpdate[i] = GetTickCount()
+		end
+	end
 end
 
 function OnRecvChat(from,msg)
 	for i=1, heroManager.iCount do
-		local target = heroManager:GetHero(i)
+		local target = heroManager:GetHero(i)
+
 		if from == target.name then
-			bubbles[i] = msg
+			staticString[i] = msg
 			bubblesTimer[i] = GetTickCount()
+			dummyj[i] = 1
 		end
 	end
 	
@@ -28,7 +53,8 @@ end
 function OnDraw()
 	for i=1, heroManager.iCount do
 	local target = heroManager:GetHero(i)
-		local heroX, heroY, onScreen = get2DFrom3D(target.x, target.y+GetDistance(target.minBBox, target.maxBBox)*.9, target.z)
+		local heroX, heroY, onScreen = get2DFrom3D(target.x, target.y+GetDistance(target.minBBox, target.maxBBox)
+*.9, target.z)
 		if bubbles[i] ~= nil and onScreen and GetTickCount() - bubblesTimer[i] < 9000 then
 			DrawText(bubbles[i],20,heroX-GetTextArea(bubbles[i], 20).x/2,heroY, 4294967280 )
 			drawFilledRect(heroX-GetTextArea(bubbles[i], 20).x/2, heroY, GetTextArea(bubbles[i], 20).x, 20, 0, 822083568, 0x50000000 )
