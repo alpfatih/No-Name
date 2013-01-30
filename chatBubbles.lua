@@ -8,7 +8,7 @@ PrintChat(" >> Chat Bubbles loaded!")
 
 --[[
 
-	Chat Bubbles v1.2 by ikita for BoL Studio
+	Chat Bubbles v1.3 by ikita for BoL Studio
 	Credits to delusionallogic, and grey
 	I learned from dermalib and AllClass
 ]]
@@ -49,22 +49,33 @@ function OnRecvChat(from,msg)
 	end
 	
 end
-
+
+function OnSpeech(msg)
+	for i=1, heroManager.iCount do
+		local target = heroManager:GetHero(i)
+		if target ~= nil and target.visible and player.name == target.name then
+			staticString[i] = msg
+			bubblesTimer[i] = GetTickCount()
+			dummyj[i] = 1
+		end
+	end	
+end
+
 function OnDraw()
 	for i=1, heroManager.iCount do
 	local target = heroManager:GetHero(i)
 		local heroX, heroY, onScreen = get2DFrom3D(target.x, target.y+GetDistance(target.minBBox, target.maxBBox)*.9, target.z)
 		if target ~= nil and target.visible and bubbles[i] ~= nil and onScreen and GetTickCount() - bubblesTimer[i] < 9000 then
-			drawFilledRect(heroX-GetTextArea(bubbles[i], 20).x/2, heroY, GetTextArea(bubbles[i], 20).x, 20, 0, 822083568, 4294967280 )
+			drawFilledRect(heroX-GetTextArea(bubbles[i], 20).x/2, heroY-15, GetTextArea(bubbles[i], 20).x, 20, 0, 822083568, 4294967280 )
 			--Close both sides 
 			for j=1, 10 do
-				DrawLine(heroX-GetTextArea(bubbles[i], 20).x/2-j, heroY+(10-math.sqrt(10^2-j^2)), heroX-GetTextArea(bubbles[i], 20).x/2-j, heroY+20-(10-math.sqrt(10^2-j^2)), 1, 4294967280)
-				DrawLine(heroX-GetTextArea(bubbles[i], 20).x/2+GetTextArea(bubbles[i], 20).x +j, heroY+(10-math.sqrt(10^2-j^2)), heroX-GetTextArea(bubbles[i], 20).x/2+GetTextArea(bubbles[i], 20).x +j, heroY+20-(10-math.sqrt(10^2-j^2)), 1, 4294967280)
+				DrawLine(heroX-GetTextArea(bubbles[i], 20).x/2-j, heroY-15+(10-math.sqrt(10^2-j^2)), heroX-GetTextArea(bubbles[i], 20).x/2-j, heroY-15+20-(10-math.sqrt(10^2-j^2)), 1, 4294967280)
+				DrawLine(heroX-GetTextArea(bubbles[i], 20).x/2+GetTextArea(bubbles[i], 20).x +j, heroY-15+(10-math.sqrt(10^2-j^2)), heroX-GetTextArea(bubbles[i], 20).x/2+GetTextArea(bubbles[i], 20).x +j, heroY-15+20-(10-math.sqrt(10^2-j^2)), 1, 4294967280)
 			--Close bottom
-				DrawLine(heroX-j/2, heroY+20, heroX-j/2, heroY+20+15-j*3/2, 1, 4294967280)
-				DrawLine(heroX+j/2, heroY+20, heroX+j/2, heroY+20+15-j*3/2, 1, 4294967280)
+				DrawLine(heroX-j/2, heroY-15+20, heroX-j/2, heroY-15+20+15-j*3/2, 1, 4294967280)
+				DrawLine(heroX+j/2, heroY-15+20, heroX+j/2, heroY-15+20+15-j*3/2, 1, 4294967280)
 			end
-			DrawText(bubbles[i],20,heroX-GetTextArea(bubbles[i], 20).x/2,heroY, 0xff000000 )
+			DrawText(bubbles[i],20,heroX-GetTextArea(bubbles[i], 20).x/2,heroY-15, 0xff000000 )
 		end
 	end
 end
