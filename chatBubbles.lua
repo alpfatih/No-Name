@@ -8,7 +8,7 @@ PrintChat(" >> Chat Bubbles loaded!")
 
 --[[
 
-	Chat Bubbles v1.3 by ikita for BoL Studio
+	Chat Bubbles v1.4 by ikita for BoL Studio
 	Credits to delusionallogic, and grey
 	I learned from dermalib and AllClass
 ]]
@@ -29,7 +29,7 @@ function OnTick()
 		if GetTickCount() - bubblesTimer[i] > 9000 then 
 			dummyj[i] = 1
 		end
-		if GetTickCount() - animationUpdate[i] > 40 and dummyj[i] <= string.len(staticString[i]) then
+		if string.len(staticString[i]) ~= nil and GetTickCount() - animationUpdate[i] > 40 and dummyj[i] <= string.len(staticString[i]) then
 			bubbles[i] = string.sub(staticString[i], 1, dummyj[i])
 			dummyj[i] = dummyj[i] + 1
 			animationUpdate[i] = GetTickCount()
