@@ -24,8 +24,8 @@ end
 
 --[[ Code ]] --
 
-function OnTick()	
-PrintChat("hi")
+function OnTick()	
+
 	Emote(math.floor(math.random(3)))		
 end
   
