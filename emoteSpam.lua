@@ -1,13 +1,15 @@
 --[[
-ikita's Emote spam
+ikita's Emote spam 1.1
 credits to Broland and his Funny Phrases
 ]]
 
-HK = string.byte("8")
- 
+HK = string.byte("8") --Default hotkey 8
+
+lastSpam = 0
+
 --[[ Config ]] --
 function OnLoad()
-scriptActiveS = true
+scriptActiveS = false
 PrintChat(" >> Emote Spam loaded")
 end
 
@@ -25,8 +27,15 @@ end
 --[[ Code ]] --
 
 function OnTick()	
-
-	Emote(math.floor(math.random(3)))		
+	if scriptActiveS then
+	player:MoveTo(mousePos.x,mousePos.z)
+	if GetTickCount() - lastSpam > 5000 then -- change 5000 to lower for quicker spams
+		-- Use emote(2) to spam only laugh. Use the other line to spam random emotes
+		Emote(2)
+		--Emote(math.floor(math.random(3)))
+		lastSpam = GetTickCount()
+	end
+	end
 end
   
  
