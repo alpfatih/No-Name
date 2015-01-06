@@ -22,6 +22,16 @@ myObjectsTable = {}
 --[[ Code ]]
 
 local ts = TargetSelector(TARGET_LOW_HP,900,DAMAGE_PHYSICAL)
+ts.name = "Ezreal"
+
+Config = scriptConfig("Ezreal QHelper", "ezrealhelper")
+Config:addParam("qAfterAA","qAfterAA Toggle", SCRIPT_PARAM_ONKEYTOGGLE, true, qAfterAAKey)
+Config:addParam("alwaysQ","Always Q Toggle", SCRIPT_PARAM_ONKEYTOGGLE, false, alwaysQKey)
+Config:permaShow("qAfterAA")
+Config:permaShow("alwaysQ")
+Config:addTS(ts)
+
+
 function OnCreateObj(object121)
 if objectIsValid(object121) then table.insert(myObjectsTable, object121) end
 end
@@ -99,17 +109,17 @@ for i,object in ipairs(myObjectsTable) do
          end
      end
      
-if predic ~= nil and blocked == false and alwaysQ then
+if predic ~= nil and blocked == false and Config.alwaysQ then
          CastSpell(_Q, predic.x, predic.z)
         end
-        if predic ~= nil and blocked == false and qAfterAA and justAA and GetTickCount() - AAtimer > waitTime then
+        if predic ~= nil and blocked == false and Config.qAfterAA and justAA and GetTickCount() - AAtimer > waitTime then
          CastSpell(_Q, predic.x, predic.z)
          justAA = false
         end
 end
 end
 
-function OnWndMsg(msg,key)
+--[[function OnWndMsg(msg,key)
 if msg == KEY_DOWN then
      if key == alwaysQKey then
          if alwaysQ then
@@ -132,5 +142,5 @@ if msg == KEY_DOWN then
             end
         end
     end
-end
+end]]
 end
